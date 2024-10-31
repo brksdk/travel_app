@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Planner</title>
+    <style>
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .planner-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            color: #ff5c5c;
+        }
+
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff5c5c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #ff7f7f;
+        }
+
+        .travel-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .travel-item {
+            background-color: #fff3f3;
+            border: 1px solid #ffcccc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .travel-item h4 {
+            margin: 0;
+            color: #ff5c5c;
+        }
+
+        .travel-item p {
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="planner-container">
+        <h2>Travel Planner</h2>
+        <input type="text" id="destination" placeholder="Destination">
+        <input type="date" id="startDate">
+        <input type="date" id="endDate">
+        <textarea id="notes" rows="3" placeholder="Notes"></textarea>
+        <button onclick="addTravel()">Add Travel Plan</button>
+
+        <div class="travel-list" id="travelList"></div>
+    </div>
+
+    <script>
+        const travelPlans = [];
+
+        function addTravel() {
+            // Girdi değerlerini al
+            const destination = document.getElementById("destination").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const notes = document.getElementById("notes").value;
+
+            // Formu temizle
+            document.getElementById("destination").value = "";
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
+            document.getElementById("notes").value = "";
+
+            // Seyahat planını listeye ekle
+            travelPlans.push({
+                destination,
+                startDate,
+                endDate,
+                notes
+            });
+
+            // Listeyi güncelle
+            displayTravelPlans();
+        }
+
+        function displayTravelPlans() {
+            const travelList = document.getElementById("travelList");
+            travelList.innerHTML = ""; // Önce listeyi temizle
+
+            travelPlans.forEach((plan, index) => {
+                const travelItem = document.createElement("div");
+                travelItem.className = "travel-item";
+
+                travelItem.innerHTML = `
+                    <h4>${plan.destination}</h4>
+                    <p><strong>From:</strong> ${plan.startDate}</p>
+                    <p><strong>To:</strong> ${plan.endDate}</p>
+                    <p>${plan.notes}</p>
+                `;
+
+                travelList.appendChild(travelItem);
+            });
+        }
+    </script>
+</body>
+</html>
