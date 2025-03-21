@@ -1,71 +1,118 @@
 <template>
   <div id="app">
-    <nav class="navbar">
-      <router-link to="/">Home</router-link>
-      <router-link to="/login">Log In</router-link>
+    <nav class="navbar" v-if="!isAdminPage">
+      <ul class="nav-links">
+        <router-link to="/">Home</router-link>
+
+        <!-- Kullanıcı giriş yapmadıysa -->
+        <template v-if="!user">
+          <router-link to="/login">Log In</router-link>
+          <router-link to="/register">Register</router-link>
+        </template>
+
+        <!-- Kullanıcı giriş yaptıysa -->
+        <div v-if="user" class="user-info">
+          <span class="user-icon">👤</span>
+          <span class="user-name">{{ user.vorname }}</span>
+          <button @click="logout">Log Out</button>
+        </div>
+      </ul>
     </nav>
-    <router-view></router-view>
+    <router-view @user-logged-in="updateUser"></router-view>
   </div>
 </template>
-<router-link to="/start"></router-link>
 
 <script>
-import { defineComponent } from 'vue'
-import router from './router'
+import { defineComponent, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
+  name: "App",
+  setup() {
+    const router = useRouter();
+    const user = ref(null);
 
-  name: 'App',
-  router,
-  /*data() {
-    return {
-      message: ''
-    }
+    // Sayfa açıldığında localStorage'dan kullanıcıyı çek
+    onMounted(() => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        user.value = JSON.parse(storedUser);
+      }
+    });
+
+    // Kullanıcı giriş yaptığında çağrılacak fonksiyon
+    const updateUser = (userData) => {
+      user.value = userData;
+      localStorage.setItem("user", JSON.stringify(userData));
+    };
+
+    const logout = () => {
+      localStorage.removeItem("user");
+      user.value = null;
+      router.push("/login");
+    };
+
+    return { user, logout, updateUser };
   },
-  mounted() {
-    fetch("http://localhost:5000/api/home")
-      .then(response => response.json())
-      .then(data => {
-        this.message = data.message;
-      })
-      .catch(error => console.error("Error fetching data:", error));
-  }*/
-})
+  computed: {
+    isAdminPage() {
+      return this.$route.path.startsWith("/admin");
+    },
+  },
+});
 </script>
 
 <style>
+/* Navbar */
 .navbar {
-  @media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
   display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
-  margin-right: 5rem;
+  justify-content: flex-end; /* Navbar öğelerini sağa hizala */
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+/* Navbar içindeki öğeleri yan yana hizalama */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-left: auto; /* Öğeleri sağ üst köşeye itmek için */
+}
+
+/* Bağlantılar ve butonlar */
+.navbar a,
+.navbar button {
+  color: white;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Hover efekti */
+.navbar a:hover,
+.navbar button:hover {
+  text-decoration: underline;
+}
+
+/* Kullanıcı bilgileri */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
   font-size: 1.25rem;
 }
 
-.navbar a {
-  color: white;
-  text-decoration: none;
-  margin-left: 3rem;
-}
-.router-link-active {
-  pointer-events: none;
-}
-
-.navbar a:hover {
-  text-decoration: underline;
-  background-color: rgba(244, 244, 249, 0.1);
+/* Kullanıcı simgesi */
+.user-icon {
+  font-size: 1.5rem;
 }
 </style>

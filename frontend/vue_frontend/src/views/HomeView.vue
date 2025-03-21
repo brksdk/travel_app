@@ -1,8 +1,8 @@
 <template>
   <div class="home-container">
     <header class="hero">
-      <h1>Welcome to Travel Planner</h1>
-      <p>Plan your perfect journey with ease and confidence.</p>
+      <h1>Robust Travel Planning for DB</h1>
+      <p>Plan your journey</p>
       <button @click="goToStart">Get Started</button>
     </header>
 
@@ -29,13 +29,15 @@
 <script>
 export default {
   methods: {
-    goToLogin() {
-      this.$router.push('/login');
-    },
     goToStart() {
-      this.$router.push('/start');
+      const user = JSON.parse(localStorage.getItem("user")); // Kullanıcı giriş yapmış mı kontrol et
+      if (user) {
+        this.$router.push("/start"); // Kullanıcı giriş yapmışsa "/start" sayfasına git
+      } else {
+        this.$router.push("/login"); // Giriş yapmamışsa "/login" sayfasına git
+      }
     },
-  }
+  },
 };
 </script>
 

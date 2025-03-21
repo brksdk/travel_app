@@ -1,134 +1,136 @@
 <template>
-  <div class="start-container">
-    <h1>Plan Your Journey</h1>
-    <form @submit.prevent="planTrip">
-      <div class="input-group">
-        <label for="start-location">Start Location</label>
-        <input type="text" id="start-location" v-model="startLocation" required placeholder="Enter start location" />
+  <div class="start-page">
+    <h1>Travel Planning</h1>
+    <form @submit.prevent="findShortestPath">
+      <div font-size=20px class="form-group">
+        <label for="start-location">Start Location:</label>
+        <input id="start-location" v-model="form.startLocation" type="text" required />
       </div>
-      <div class="input-group">
-        <label for="destination">Destination</label>
-        <input type="text" id="destination" v-model="destination" required placeholder="Enter destination" />
+      <div class="form-group">
+        <label for="destination">Destination:</label>
+        <input id="destination" v-model="form.destination" type="text" required />
       </div>
-      <div class="input-group">
-        <label for="date">Date</label>
-        <input type="date" id="date" v-model="date" required />
+      <div class="form-group">
+        <label for="date">Date:</label>
+        <input id="date" v-model="form.date" type="date" required />
       </div>
-      <div class="input-group">
-        <label for="time">Time</label>
-        <input type="time" id="time" v-model="time" required />
+      <div class="form-group">
+        <label for="time">Time:</label>
+        <input id="time" v-model="form.time" type="time" required />
       </div>
-      <button type="submit">Find Routes</button>
+      <button @click="findShortestPath">Find Shortest Route</button>
     </form>
 
-    <section v-if="routes.length" class="routes">
-      <h2>Available Routes</h2>
-      <ul>
-        <li v-for="(route, index) in routes" :key="index">
-          {{ route }}
-        </li>
-      </ul>
-    </section>
+    <!-- Backend'den gelen sonucu buraya kutulu bir tasarımla yazdırıyoruz -->
+    <div v-if="shortestPathResult" class="result-box">
+      <h2>Shortest Path Result</h2>
+      <p>{{ shortestPathResult }}</p>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      startLocation: "",
-      destination: "",
-      date: "",
-      time: "",
-      routes: []
+      form: {
+        startLocation: "",
+        destination: "",
+        date: "",
+        time: "",
+      },
+      shortestPathResult: null, // Sonuç burada tutulacak
     };
   },
   methods: {
-    planTrip() {
-      // example routes. i will fill them with APIs
-      this.routes = [
-        `Route from ${this.startLocation} to ${this.destination} at ${this.date} ${this.time}`,
-        `Alternative route from ${this.startLocation} to ${this.destination} via another city`
-      ];
-    }
-  }
+    async findShortestPath() {
+      console.log("Button clicked!"); // Kontrol amaçlı konsola yazdır
+
+      // Tarih ve saati formatla
+      const travelDate = this.form.date.split("-").reverse().join("."); // 'yyyy-mm-dd' -> 'dd.mm.yyyy'
+      const travelTime = this.form.time;
+      const travelDatetime = `${travelDate} ${travelTime}`; // 'dd.mm.yyyy HH:MM' formatında
+
+      console.log("Formatted datetime:", travelDatetime); // Tarih-saat formatını kontrol et
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/shortest_path", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from_node: this.form.startLocation,
+            to_node: this.form.destination,
+            travel_date: travelDate, // 'dd.mm.yyyy' formatında gönderiyoruz
+            travel_time: travelTime, // Saat kısmını değiştirmiyoruz
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch the shortest path.");
+        }
+
+        const data = await response.json();
+        console.log(data); // Backend'den dönen sonucu kontrol et
+        this.shortestPathResult = data.result; // Sonucu data.result ile alıyoruz
+      } catch (error) {
+        console.error(error); // Hataları konsola yazdır
+      }
+    },
+  },
 };
 </script>
 
 <style scoped>
-.start-container {
-  max-width: 500px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 8px;
-  background-color: rgba(244, 244, 249, 0);
+.start-page {
+  max-width: 600px;
+  margin: 0 auto;
   text-align: center;
 }
-
-h1 {
-  color: white;
-  margin-bottom: 1.5rem;
+.form-group {
+  margin-bottom: 15px;
 }
-
-
-.input-group {
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-input[type="text"],
-input[type="date"],
-input[type="time"] {
+input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 8px;
+  font-size: 20px;
+  margin-top: 5px;
 }
-
 button {
-  width: 100%;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 4px;
-  background-color: rgba(244, 244, 249, 0.1);
-  color: white;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-size: 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
-
+.result-box {
+  margin-top: 20px;
+  padding: 15px;
+  border: 5px solid darkred;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  text-align: left;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 20px;
+}
+.result-box h2 {
+  margin: 0 0 10px;
+  color: darkred;
+  font-size: 20px;
+}
+.result-box p {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #333;
+}
 button:hover {
-  background-color: rgba(244, 244, 249, 0.3);
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
 }
 
-.routes {
-  margin-top: 2rem;
-}
-
-.routes h2 {
-  color: rgba(244, 244, 249, 1);
-  margin-bottom: 1rem;
-}
-
-.routes ul {
-  list-style: none;
-  padding: 0;
-  color: black;
-}
-
-.routes li {
-  background-color: rgba(244, 244, 249, 1);
-  padding: 0.75rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 0.5rem;
-}
 </style>
