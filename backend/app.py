@@ -1,5 +1,3 @@
-import pandas as pd
-import networkx as nx
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, request, jsonify
@@ -157,8 +155,9 @@ def get_trains():
     from_station = data.get('from_station', '').strip()
     to_station = data.get('to_station', '').strip()
     travel_date = data.get('travel_date')
+    travel_time = data.get('travel_time')  # Yeni: Saat ve dakika
 
-    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}")  # Debug
+    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}, time={travel_time}")  # Debug
 
     if not from_station or not to_station or not travel_date:
         return jsonify({"error": "Missing required fields."}), 400
@@ -167,11 +166,19 @@ def get_trains():
         travel_date_obj = datetime.strptime(travel_date, "%Y-%m-%d").date()
         print(f"Parsed date: {travel_date_obj}")  # Debug
 
-        trains = db.session.query(Streckentabelle).filter(
+        query = db.session.query(Streckentabelle).filter(
             Streckentabelle.station_name_from == from_station,
             Streckentabelle.station_name_to == to_station,
             Streckentabelle.planned_arrival_date_from == travel_date_obj
-        ).all()
+        )
+
+        # Eğer saat bilgisi gönderilmişse, saate göre filtrele
+        if travel_time:
+            travel_time_obj = datetime.strptime(travel_time, "%H:%M").time()
+            print(f"Parsed time: {travel_time_obj}")  # Debug
+            query = query.filter(Streckentabelle.planned_departure_from >= travel_time_obj)
+
+        trains = query.all()
 
         print(f"Bulunan trenler: {len(trains)}")  # Debug
 
@@ -197,86 +204,4 @@ def get_trains():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
-#file_path = r'C:\Users\Berk\PycharmProjects\travelApp\predictions\Data_Regression_Test.xlsx'
-"""""
-xls = pd.ExcelFile(file_path)
-
-df = pd.read_excel(xls, sheet_name='Sheet1')
-
-
-def shortest_path(from_node: str, to_node: str, travel_date: str, travel_time: str):
-    from_node = from_node.strip().upper()
-    to_node = to_node.strip().upper()
-
-    travel_datetime = f"{travel_date} {travel_time}"
-    travel_time_obj = datetime.strptime(travel_datetime, "%d.%m.%Y %H:%M")
-
-    if 6 <= travel_time_obj.hour < 10:
-        category = 1
-    elif 10 <= travel_time_obj.hour < 14:
-        category = 2
-    elif 14 <= travel_time_obj.hour < 18:
-        category = 3
-    else:
-        category = 4
-
-    df_filtered = df[df["Category"] == category]
-
-    G = nx.DiGraph()
-    for _, row in df_filtered.iterrows():
-        G.add_edge(row["From"], row["To"], weight=row["Planned Travel Time"], delay=row["Predicted Delay"])
-
-    if from_node not in G.nodes or to_node not in G.nodes:
-        return f"Error: {from_node} or {to_node} not found in the graph!"
-
-    try:
-        path = nx.shortest_path(G, source=from_node, target=to_node, weight="weight")
-        total_time = nx.shortest_path_length(G, source=from_node, target=to_node, weight="weight")
-
-        delays = []
-        for i in range(len(path) - 1):
-            edge = (path[i], path[i + 1])
-            if 'delay' in G.edges[edge]:
-                delays.append(G.edges[edge]['delay'])
-            else:
-                print(f"Missing delay information: {edge}")
-                delays.append(0)
-
-        total_delay = sum(delays)
-        path_info = " -> ".join([f"{path[i]} (Delay: {delays[i]:.2f} min)" for i in range(len(delays))]) + f" -> {path[-1]}"
-
-        return (f"Shortest path for {travel_datetime}: {path_info}\n"
-                f"Total planned travel time: {total_time:.2f} minutes \n"
-                f"Total predicted delay: {total_delay:.2f} minutes")
-    except nx.NetworkXNoPath:
-        return f"No path found between {from_node} and {to_node}!"
-
-
-@app.route('/api/shortest_path', methods=['POST'])
-def shortest_path_api():
-  data = request.get_json()
-  print(f"Received data: {data}")  # Gelen veriyi kontrol et
-
-  travel_date = data.get("travel_date")
-  travel_time = data.get("travel_time")
-
-  if not travel_date or not travel_time:
-    return jsonify({"error": "Missing travel_date or travel_time field."}), 400
-
-  travel_datetime = f"{travel_date} {travel_time}"  # 'DD.MM.YYYY HH:MM' formatı olacak
-  print(f"Combined travel datetime: {travel_datetime}")  # Kontrol için konsola yazdır
-
-  try:
-    # Travel datetime'ı doğru formatta ayarlayın
-    travel_time_obj = datetime.strptime(travel_datetime, "%d.%m.%Y %H:%M")
-  except ValueError as e:
-    print(f"Date parsing error: {e}")  # Hata mesajını kontrol et
-    return jsonify({"error": "Invalid date format. Please use 'dd.mm.yyyy hh:mm'."}), 400
-
-  # Bu kısımda, artık travel_date ve travel_time parametrelerini fonksiyona gönderiyoruz
-  result = shortest_path(data.get("from_node"), data.get("to_node"), travel_date, travel_time)
-
-  return jsonify({"result": result})  # Sonucu JSON formatında döndürüyoruz
-"""""
+    app.run(host="0.0.0.0", port=5000, debug=False)

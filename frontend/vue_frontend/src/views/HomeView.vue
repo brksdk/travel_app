@@ -52,11 +52,15 @@
           </div>
         </div>
 
-        <!-- Tarih Input'u -->
+        <!-- Tarih ve Saat Input'ları -->
         <div class="form-group">
           <div class="input-wrapper">
             <span class="icon">📅</span>
             <input type="date" placeholder="Hinreise" class="form-input" ref="date" v-model="selectedDate" />
+          </div>
+          <div class="input-wrapper">
+            <span class="icon">🕒</span>
+            <input type="time" placeholder="Uhrzeit" class="form-input" ref="time" v-model="selectedTime" />
           </div>
         </div>
 
@@ -124,6 +128,7 @@ export default {
       fromCity: '',
       toCity: '',
       selectedDate: '',
+      selectedTime: '',
       trainResults: [],
       searched: false,
       errorMessage: null,
@@ -201,6 +206,7 @@ export default {
         from_station: this.fromCity.trim(),
         to_station: this.toCity.trim(),
         travel_date: this.selectedDate,
+        travel_time: this.selectedTime,
       };
       console.log("Gönderilen veri:", formData);
 
