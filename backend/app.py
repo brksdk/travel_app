@@ -15,13 +15,30 @@ db = SQLAlchemy(app)
 
 
 class User(db.Model):
-    __tablename__ = 'users'  # PostgreSQL'deki tablonun adı
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     vorname = db.Column(db.String(80), nullable=False)
     nachname = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     passwort = db.Column(db.String(120), nullable=False)
     tel_nummer = db.Column(db.String(20), nullable=False)
+
+
+class Streckentabelle(db.Model):
+    __tablename__ = 'streckentabelle'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    train_reihenfolge_from = db.Column(db.String(50))
+    station_name_from = db.Column(db.String(100), nullable=False)
+    planned_arrival_date_from = db.Column(db.Date)
+    planned_arrival_from = db.Column(db.Time)
+    planned_departure_from = db.Column(db.Time)
+    arrival_delay_from = db.Column(db.Integer)
+    train_reihenfolge_to = db.Column(db.String(50))
+    station_name_to = db.Column(db.String(100), nullable=False)
+    planned_arrival_to = db.Column(db.Time)
+    planned_departure_to = db.Column(db.Time)
+    arrival_delay_to = db.Column(db.Integer)
+    train_classification = db.Column(db.String(50))
 
 
 @app.route('/api/register', methods=['POST'])
@@ -33,7 +50,7 @@ def register():
         vorname=data['vorname'],
         nachname=data['nachname'],
         email=data['email'],
-        passwort=hashed_password,  # Şifre güvenli şekilde saklanıyor
+        passwort=hashed_password,
         tel_nummer=data['tel_nummer']
     )
 
@@ -44,6 +61,7 @@ def register():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -84,6 +102,7 @@ def admin_login():
 
     return jsonify({"message": "❌ Invalid email or password!"}), 401
 
+
 @app.route('/api/users', methods=['GET'])
 def get_users():
     users = User.query.all()
@@ -93,10 +112,11 @@ def get_users():
     ]
     return jsonify(user_list)
 
+
 @app.route('/api/delete_user/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     if user_id == 1:
-        return jsonify({"message": "❌ Admin kann nicht gelösccht werden"}), 403  # Admin koruma
+        return jsonify({"message": "❌ Admin kann nicht gelöscht werden"}), 403
 
     user = User.query.get(user_id)
     if not user:
@@ -105,17 +125,77 @@ def delete_user(user_id):
     try:
         db.session.delete(user)
         db.session.commit()
-        # ID'leri yeniden sıralama
         users = User.query.order_by(User.id).all()
         new_id = 1
         for user in users:
             user.id = new_id
             new_id += 1
         db.session.commit()
-        return jsonify({"message": "✅ User wurde erfolgreich gelöscht.!"})
+        return jsonify({"message": "✅ User wurde erfolgreich gelöscht."})
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/stations', methods=['GET'])
+def get_stations():
+    try:
+        from_stations = db.session.query(Streckentabelle.station_name_from).distinct().all()
+        to_stations = db.session.query(Streckentabelle.station_name_to).distinct().all()
+
+        stations = set([station[0] for station in from_stations] + [station[0] for station in to_stations])
+        stations = sorted(list(stations))
+
+        return jsonify({"stations": stations})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/trains', methods=['POST'])
+def get_trains():
+    data = request.json
+    from_station = data.get('from_station', '').strip()
+    to_station = data.get('to_station', '').strip()
+    travel_date = data.get('travel_date')
+
+    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}")  # Debug
+
+    if not from_station or not to_station or not travel_date:
+        return jsonify({"error": "Missing required fields."}), 400
+
+    try:
+        travel_date_obj = datetime.strptime(travel_date, "%Y-%m-%d").date()
+        print(f"Parsed date: {travel_date_obj}")  # Debug
+
+        trains = db.session.query(Streckentabelle).filter(
+            Streckentabelle.station_name_from == from_station,
+            Streckentabelle.station_name_to == to_station,
+            Streckentabelle.planned_arrival_date_from == travel_date_obj
+        ).all()
+
+        print(f"Bulunan trenler: {len(trains)}")  # Debug
+
+        train_list = [
+            {
+                "id": train.id,
+                "train_reihenfolge_from": train.train_reihenfolge_from,
+                "train_classification": train.train_classification,
+                "from_station": train.station_name_from,
+                "to_station": train.station_name_to,
+                "planned_departure_from": f"{train.planned_departure_from.strftime('%H:%M:%S')}" if train.planned_departure_from else None,
+                "planned_arrival_to": f"{train.planned_arrival_to.strftime('%H:%M:%S')}" if train.planned_arrival_to else None,
+                "arrival_delay_from": train.arrival_delay_from,
+                "arrival_delay_to": train.arrival_delay_to
+            }
+            for train in trains
+        ]
+
+        return jsonify({"trains": train_list})
+    except Exception as e:
+        print(f"Hata: {str(e)}")  # Debug
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 

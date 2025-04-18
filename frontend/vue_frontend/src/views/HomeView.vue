@@ -9,12 +9,46 @@
         <div class="form-group">
           <div class="input-wrapper">
             <span class="icon">📍</span>
-            <input type="text" placeholder="Von (z.B. Berlin)" class="form-input top" ref="from" />
+            <input
+              type="text"
+              placeholder="Von (z.B. Köln Hbf)"
+              class="form-input top"
+              v-model.trim="fromCity"
+              ref="from"
+              @input="filterStations('from')"
+            />
             <button type="button" class="swap-button" @click="swapCities">↕</button>
+            <ul v-if="filteredFromStations.length" class="suggestion-list">
+              <li
+                v-for="station in filteredFromStations"
+                :key="station"
+                @click="selectStation('from', station)"
+                class="suggestion-item"
+              >
+                {{ station }}
+              </li>
+            </ul>
           </div>
           <div class="input-wrapper">
             <span class="icon">📍</span>
-            <input type="text" placeholder="Nach (z.B. Munich)" class="form-input bottom" ref="to" />
+            <input
+              type="text"
+              placeholder="Nach (z.B. Aachen Hbf)"
+              class="form-input bottom"
+              v-model.trim="toCity"
+              ref="to"
+              @input="filterStations('to')"
+            />
+            <ul v-if="filteredToStations.length" class="suggestion-list">
+              <li
+                v-for="station in filteredToStations"
+                :key="station"
+                @click="selectStation('to', station)"
+                class="suggestion-item"
+              >
+                {{ station }}
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -22,14 +56,48 @@
         <div class="form-group">
           <div class="input-wrapper">
             <span class="icon">📅</span>
-            <input type="date" placeholder="Hinreise" class="form-input" ref="date" />
+            <input type="date" placeholder="Hinreise" class="form-input" ref="date" v-model="selectedDate" />
           </div>
         </div>
-
 
         <!-- Suche Butonu -->
         <button type="submit" class="search-button">Suche</button>
       </form>
+    </div>
+
+    <!-- Tren Listesi -->
+    <div class="train-results" v-if="searched">
+      <div v-if="trainResults.length > 0">
+        <h2>Verfügbare Züge</h2>
+        <table class="train-table">
+          <thead>
+            <tr>
+              <th>Zugnummer</th>
+              <th>Zugtyp</th>
+              <th>Ab</th>
+              <th>An</th>
+              <th>Geplante Abfahrt</th>
+              <th>Geplante Ankunft</th>
+              <th>Verspätung (Min)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="train in trainResults" :key="train.train_reihenfolge_from">
+              <td>{{ train.train_reihenfolge_from }}</td>
+              <td>{{ train.train_classification }}</td>
+              <td>{{ train.from_station }}</td>
+              <td>{{ train.to_station }}</td>
+              <td>{{ formatTime(train.planned_departure_from) }}</td>
+              <td>{{ formatTime(train.planned_arrival_to) }}</td>
+              <td>{{ train.arrival_delay_from || train.arrival_delay_to || 0 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else>
+        <p>Keine Züge für diese Route gefunden.</p>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+      </div>
     </div>
 
     <section class="cities">
@@ -44,48 +112,138 @@
 </template>
 
 <script>
+import { citiesList } from '@/data/citiesData';
+
 export default {
   data() {
     return {
-      cities: [
-        "Berlin", "Munich", "Hamburg", "Cologne", "Frankfurt", "Stuttgart", "Düsseldorf", "Dresden", "Leipzig", "Hannover", "Nuremberg", "Bremen", "Dortmund", "Essen", "Bonn", "Mannheim", "Karlsruhe", "Freiburg", "Kiel", "Rostock", "Mainz", "Saarbrücken", "Augsburg", "Wiesbaden", "Erfurt"
-      ],
-      adults: 1,
-      students: 0,
-      childrenUnder6: 0,
+      cities: citiesList,
+      stations: [],
+      filteredFromStations: [],
+      filteredToStations: [],
+      fromCity: '',
+      toCity: '',
+      selectedDate: '',
+      trainResults: [],
+      searched: false,
+      errorMessage: null,
     };
   },
-  computed: {
-    totalPassengers() {
-      return this.adults + this.students + this.childrenUnder6;
-    },
+  async mounted() {
+    await this.loadStations();
   },
   methods: {
-    swapCities() {
-      const from = this.$refs.from.value;
-      const to = this.$refs.to.value;
-      this.$refs.from.value = to;
-      this.$refs.to.value = from;
+    async loadStations() {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/stations", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Şehirler yüklenemedi.");
+        }
+
+        this.stations = data.stations || [];
+        console.log("Yüklenen şehirler:", this.stations);
+      } catch (error) {
+        console.error("Şehirleri çekerken hata:", error);
+        this.errorMessage = `❌ Hata: ${error.message}`;
+        this.stations = [""];
+      }
     },
-    handleSearch() {
+    swapCities() {
+      const temp = this.fromCity;
+      this.fromCity = this.toCity;
+      this.toCity = temp;
+      this.filterStations('from');
+      this.filterStations('to');
+    },
+    filterStations(field) {
+      const query = (field === 'from' ? this.fromCity : this.toCity).toLowerCase().trim();
+      console.log(`Filtreleme: ${field}, Query: ${query}`);
+      if (query) {
+        const filtered = this.stations.filter(station =>
+            station && station.toLowerCase().startsWith(query)
+        );
+        console.log("Filtrelenmiş şehirler:", filtered);
+        if (field === 'from') {
+          this.filteredFromStations = filtered;
+        } else {
+          this.filteredToStations = filtered;
+        }
+      } else {
+        if (field === 'from') {
+          this.filteredFromStations = [];
+        } else {
+          this.filteredToStations = [];
+        }
+      }
+    },
+    selectStation(field, station) {
+      if (field === 'from') {
+        this.fromCity = station;
+        this.filteredFromStations = [];
+      } else {
+        this.toCity = station;
+        this.filteredToStations = [];
+      }
+    },
+    async handleSearch() {
+      this.searched = true;
+      this.errorMessage = null;
+
       const formData = {
-        from: this.$refs.from.value,
-        to: this.$refs.to.value,
-        date: this.$refs.date.value,
-        passengers: {
-          adults: this.adults,
-          students: this.students,
-          childrenUnder6: this.childrenUnder6,
-          total: this.totalPassengers,
-        },
+        from_station: this.fromCity.trim(),
+        to_station: this.toCity.trim(),
+        travel_date: this.selectedDate,
       };
-      console.log("Form Data:", formData);
+      console.log("Gönderilen veri:", formData);
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/api/trains", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Tren araması başarısız.");
+        }
+
+        this.trainResults = data.trains || [];
+        if (this.trainResults.length === 0) {
+          console.log("Hiç tren bulunamadı, veri doğru mu?");
+        }
+      } catch (error) {
+        console.error("Tren arama hatası:", error);
+        this.errorMessage = `❌ Hata: ${error.message}`;
+        this.trainResults = [];
+      }
+    },
+    formatTime(time) {
+      if (!time) return '-';
+      return time;
     },
   },
 };
 </script>
 
 <style scoped>
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
 .home-container {
   font-family: Arial, sans-serif;
   color: #333;
@@ -187,10 +345,29 @@ export default {
   background: #e0e0e0;
 }
 
+.suggestion-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+}
 
-.form-input.small {
-  width: 60px;
-  padding: 0.5rem;
+.suggestion-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
 }
 
 .search-button {
@@ -211,13 +388,20 @@ export default {
 
 .cities {
   width: 100%;
-  max-width: 1200px;
+  max-width: 50vw;
   text-align: center;
-  padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.7);
+  padding: 2rem 1rem;
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 0;
+  margin-right: auto;
+  margin-left: 4rem;
+  margin-top: auto;
+  margin-bottom: 2rem
+}
+
+.cities h2{
+  font-weight: bold;
 }
 
 .city-grid {
@@ -241,5 +425,40 @@ export default {
 
 .city:hover {
   background-color: rgba(221, 221, 221, 0.7);
+}
+
+.train-results {
+  max-width: 1200px;
+  width: 100%;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 2rem 0;
+}
+
+.train-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.train-table th,
+.train-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.train-table th {
+  background-color: #00a680;
+  color: white;
+}
+
+.train-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.train-table tr:hover {
+  background-color: #e0e0e0;
 }
 </style>

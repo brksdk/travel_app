@@ -179,7 +179,7 @@ export default defineComponent({
 .weather-info {
   color: white;
   font-size: 1.25rem;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.2);
   padding: 0.5rem 1rem;
   border-radius: 5px;
   display: flex;
