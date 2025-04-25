@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
+import requests
 
 app = Flask("__main__")
 CORS(app)
@@ -200,6 +201,65 @@ def get_trains():
         return jsonify({"trains": train_list})
     except Exception as e:
         print(f"Hata: {str(e)}")  # Debug
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/route_plan', methods=['POST'])
+def route_plan():
+    data = request.json
+    from_station = data.get('from_station', '').strip()
+    to_station = data.get('to_station', '').strip()
+    travel_date = data.get('travel_date')  # Format: YYYY-MM-DD
+    travel_time = data.get('travel_time')  # Format: HH:MM
+
+    # Gerekli alanların kontrolü
+    if not from_station or not to_station or not travel_date or not travel_time:
+        return jsonify({"error": "Missing required fields."}), 400
+
+    try:
+        # 1. arkadaşın API'sine veriyi gönder
+        first_friend_response = requests.post(
+            "http://first-friend-service:5001/api/route_planung",  # 1. arkadaşın API'si
+            json={
+                "from_station": from_station,
+                "to_station": to_station,
+                "travel_date": travel_date,
+                "travel_time": travel_time
+            },
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+
+        if first_friend_response.status_code != 200:
+            return jsonify({"error": "Error in route planning service."}), 500
+
+        # 1. arkadaşın API'sinden gelen rota verisini al
+        detailed_routes = first_friend_response.json().get("routes", [])
+
+        if not detailed_routes:
+            return jsonify({"error": "No routes found."}), 404
+
+        # 2. arkadaşın API'sine veriyi gönder
+        second_friend_response = requests.post(
+            "http://second-friend-service:5002/api/predict_delays",  # 2. arkadaşın API'si
+            json={"routes": detailed_routes},
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+
+        if second_friend_response.status_code != 200:
+            return jsonify({"error": "Error in delay prediction service."}), 500
+
+        # 2. arkadaşın API'sinden gelen sonucu al
+        final_routes = second_friend_response.json().get("routes", [])
+
+        # Frontend'e dönüş
+        return jsonify({"routes": final_routes})
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error in API communication: {str(e)}")
+        return jsonify({"error": "Failed to communicate with route planning or delay prediction service."}), 500
+    except Exception as e:
+        print(f"Error in route planning: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
