@@ -5,26 +5,32 @@
       <div v-if="route.path.startsWith('/city')" class="weather-info">
         <span v-if="weather">
           <img :src="`http://openweathermap.org/img/wn/${weather.icon}@2x.png`" alt="Weather Icon" class="weather-icon" />
-          {{ weather.description }}: {{ weather.temperature }}°C | Luftfeuchte: {{ weather.humidity }}% | Wind: {{ weather.windSpeed }} m/s
+          {{ weather.description }}: {{ weather.temperature }}°C | {{ $t('navbar.humidity') }}: {{ weather.humidity }}% | {{ $t('navbar.wind') }}: {{ weather.windSpeed }} m/s
         </span>
-        <span v-else>Hava durumu yükleniyor...</span>
+        <span v-else>{{ $t('navbar.weatherLoading') }}</span>
       </div>
 
       <ul class="nav-links">
-        <router-link to="/">Home</router-link>
+        <router-link to="/">{{ $t('navbar.home') }}</router-link>
 
         <!-- Kullanıcı giriş yapmadıysa -->
         <template v-if="!user">
-          <router-link to="/login">Log In</router-link>
-          <router-link to="/register">Register</router-link>
+          <router-link to="/login">{{ $t('navbar.login') }}</router-link>
+          <router-link to="/register">{{ $t('navbar.register') }}</router-link>
         </template>
 
         <!-- Kullanıcı giriş yaptıysa -->
         <div v-if="user" class="user-info">
           <span class="user-icon">👤</span>
           <span class="user-name">{{ user.vorname }}</span>
-          <button @click="logout">Log Out</button>
+          <button @click="logout">{{ $t('navbar.logout') }}</button>
         </div>
+
+        <!-- Dil seçici -->
+        <select v-model="$i18n.locale" @change="changeLanguage" class="language-selector">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
       </ul>
     </nav>
     <router-view @user-logged-in="updateUser" @update-background="updateBackground" @update-weather="updateWeather"></router-view>
@@ -34,8 +40,6 @@
 <script>
 import { defineComponent, ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-
-// homeW.jpeg resmini import ediyoruz
 import HomeWImage from '@/assets/homeW.jpeg';
 
 export default defineComponent({
@@ -73,6 +77,10 @@ export default defineComponent({
       weather.value = weatherData;
     };
 
+    const changeLanguage = () => {
+      localStorage.setItem('locale', this.$i18n.locale); // Dil tercihini kaydet
+    };
+
     const backgroundImage = computed(() => {
       if (route.path.startsWith("/city") && customBackground.value) {
         return customBackground.value;
@@ -105,6 +113,7 @@ export default defineComponent({
       backgroundSize,
       backgroundPosition,
       route,
+      changeLanguage,
     };
   },
   computed: {
@@ -192,5 +201,21 @@ export default defineComponent({
   height: 40px;
   margin-right: 0.1rem;
   margin-top: 0rem;
+}
+
+/* Dil seçici */
+.language-selector {
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.language-selector:focus {
+  outline: none;
 }
 </style>

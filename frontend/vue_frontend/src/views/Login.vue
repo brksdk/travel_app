@@ -68,7 +68,7 @@ export default {
 
         // Başarı mesajından sonra yönlendirme
         setTimeout(() => {
-          this.$router.push("/start"); // Kullanıcıyı yönlendir
+          this.$router.push("/"); // Kullanıcıyı yönlendir
         }, 1500);
       } catch (error) {
         console.error(error);

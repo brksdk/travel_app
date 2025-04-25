@@ -2,7 +2,7 @@
   <div class="home-container">
     <div class="content-wrapper">
       <div class="slogan">
-        <h1>Buche dein Zugtickets, Plane deine Reise</h1>
+        <h1>{{ $t('home.slogan') }}</h1>
       </div>
       <form class="booking-form" @submit.prevent="handleSearch">
         <!-- Şehir Input'ları -->
@@ -11,7 +11,7 @@
             <span class="icon">📍</span>
             <input
               type="text"
-              placeholder="Von (z.B. Köln Hbf)"
+              :placeholder="$t('home.from')"
               class="form-input top"
               v-model.trim="fromCity"
               ref="from"
@@ -33,7 +33,7 @@
             <span class="icon">📍</span>
             <input
               type="text"
-              placeholder="Nach (z.B. Aachen Hbf)"
+              :placeholder="$t('home.to')"
               class="form-input bottom"
               v-model.trim="toCity"
               ref="to"
@@ -65,24 +65,24 @@
         </div>
 
         <!-- Suche Butonu -->
-        <button type="submit" class="search-button">Suche</button>
+        <button type="submit" class="search-button">{{ $t('home.search') }}</button>
       </form>
     </div>
 
     <!-- Tren Listesi -->
     <div class="train-results" v-if="searched">
       <div v-if="trainResults.length > 0">
-        <h2>Verfügbare Züge</h2>
+        <h2>{{ $t('home.availableTrains') }}</h2>
         <table class="train-table">
           <thead>
             <tr>
-              <th>Zugnummer</th>
-              <th>Zugtyp</th>
-              <th>Ab</th>
-              <th>An</th>
-              <th>Geplante Abfahrt</th>
-              <th>Geplante Ankunft</th>
-              <th>Verspätung (Min)</th>
+              <th>{{ $t('home.trainNumber') }}</th>
+              <th>{{ $t('home.trainType') }}</th>
+              <th>{{ $t('home.departure') }}</th>
+              <th>{{ $t('home.arrival') }}</th>
+              <th>{{ $t('home.plannedDeparture') }}</th>
+              <th>{{ $t('home.plannedArrival') }}</th>
+              <th>{{ $t('home.delay') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -99,13 +99,13 @@
         </table>
       </div>
       <div v-else>
-        <p>Keine Züge für diese Route gefunden.</p>
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <p>{{ $t('home.noTrains') }}</p>
+        <p v-if="errorMessage" class="error-message">{{ $t('home.error') }}: {{ errorMessage }}</p>
       </div>
     </div>
 
     <section class="cities">
-      <h2>Popular Cities in Germany</h2>
+      <h2>{{ $t('home.popularCities') }}</h2>
       <div class="city-grid">
         <router-link v-for="city in cities" :key="city" :to="`/city/${city}`" class="city">
           {{ city }}
@@ -150,14 +150,14 @@ export default {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Şehirler yüklenemedi.");
+          throw new Error(data.error || this.$t('home.error'));
         }
 
         this.stations = data.stations || [];
         console.log("Yüklenen şehirler:", this.stations);
       } catch (error) {
         console.error("Şehirleri çekerken hata:", error);
-        this.errorMessage = `❌ Hata: ${error.message}`;
+        this.errorMessage = error.message;
         this.stations = [""];
       }
     },
@@ -222,7 +222,7 @@ export default {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.error || "Tren araması başarısız.");
+          throw new Error(data.error || this.$t('home.error'));
         }
 
         this.trainResults = data.trains || [];
@@ -231,7 +231,7 @@ export default {
         }
       } catch (error) {
         console.error("Tren arama hatası:", error);
-        this.errorMessage = `❌ Hata: ${error.message}`;
+        this.errorMessage = error.message;
         this.trainResults = [];
       }
     },

@@ -3,95 +3,89 @@
     <!-- Şehir başlığı -->
     <h1 class="city-title">{{ cityName }}</h1>
 
-    <!-- Hava Durumu Bilgisi (Geçici olarak buraya ekliyoruz, sonra navbar'a taşıyacağız) -->
-    <div v-if="weather" class="weather-info">
-      <span>{{ weather.description }}: {{ weather.temperature }}°C</span>
-    </div>
-
     <!-- Gizle/Göster Butonu (Her zaman sağ üstte) -->
     <button class="toggle-button" @click="toggleCarousels">
-      {{ showCarousels ? 'Ausblenden' : 'Anzeigen' }}
+      {{ showCarousels ? $t('city.hide') : $t('city.show') }}
     </button>
 
     <!-- Carousellerin görünürlüğünü kontrol eden yapı -->
     <div v-if="showCarousels" class="carousel-grid">
-
       <!-- Sağ Üst Carousel -->
-        <div class="carousel-container top-right">
-          <div class="carousel">
-            <button class="carousel-button prev" @click="prevSlide(0)">
-              <
-            </button>
-            <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[0] * 100}%)` }">
-              <div v-for="(slide, index) in cityData.carousels[0]" :key="index" class="carousel-slide">
-                <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-                <p class="carousel-name">{{ slide.name }}</p>
-              </div>
+      <div class="carousel-container top-right">
+        <div class="carousel">
+          <button class="carousel-button prev" @click="prevSlide(0)">
+            <
+          </button>
+          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[0] * 100}%)` }">
+            <div v-for="(slide, index) in cityData.carousels[0]" :key="index" class="carousel-slide">
+              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
+              <p class="carousel-name">{{ slide.name }}</p>
             </div>
-            <button class="carousel-button next" @click="nextSlide(0)">
-              >
-            </button>
           </div>
+          <button class="carousel-button next" @click="nextSlide(0)">
+            >
+          </button>
         </div>
+      </div>
 
-        <!-- Sol Üst Carousel -->
-        <div class="carousel-container top-left">
-          <div class="carousel">
-            <button class="carousel-button prev" @click="prevSlide(1)">
-              <
-            </button>
-            <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[1] * 100}%)` }">
-              <div v-for="(slide, index) in cityData.carousels[1]" :key="index" class="carousel-slide">
-                <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-                <p class="carousel-name">{{ slide.name }}</p>
-              </div>
+      <!-- Sol Üst Carousel -->
+      <div class="carousel-container top-left">
+        <div class="carousel">
+          <button class="carousel-button prev" @click="prevSlide(1)">
+            <
+          </button>
+          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[1] * 100}%)` }">
+            <div v-for="(slide, index) in cityData.carousels[1]" :key="index" class="carousel-slide">
+              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
+              <p class="carousel-name">{{ slide.name }}</p>
             </div>
-            <button class="carousel-button next" @click="nextSlide(1)">
-              >
-            </button>
           </div>
+          <button class="carousel-button next" @click="nextSlide(1)">
+            >
+          </button>
         </div>
+      </div>
 
-        <!-- Sağ Alt Carousel -->
-        <div class="carousel-container bottom-right">
-          <div class="carousel">
-            <button class="carousel-button prev" @click="prevSlide(2)">
-              <
-            </button>
-            <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[2] * 100}%)` }">
-              <div v-for="(slide, index) in cityData.carousels[2]" :key="index" class="carousel-slide">
-                <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-                <p class="carousel-name">{{ slide.name }}</p>
-              </div>
+      <!-- Sağ Alt Carousel -->
+      <div class="carousel-container bottom-right">
+        <div class="carousel">
+          <button class="carousel-button prev" @click="prevSlide(2)">
+            <
+          </button>
+          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[2] * 100}%)` }">
+            <div v-for="(slide, index) in cityData.carousels[2]" :key="index" class="carousel-slide">
+              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
+              <p class="carousel-name">{{ slide.name }}</p>
             </div>
-            <button class="carousel-button next" @click="nextSlide(2)">
-              >
-            </button>
           </div>
+          <button class="carousel-button next" @click="nextSlide(2)">
+            >
+          </button>
         </div>
+      </div>
 
-        <!-- Sol Alt Carousel -->
-        <div class="carousel-container bottom-left">
-          <div class="carousel">
-            <button class="carousel-button prev" @click="prevSlide(3)">
-              <
-            </button>
-            <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[3] * 100}%)` }">
-              <div v-for="(slide, index) in cityData.carousels[3]" :key="index" class="carousel-slide">
-                <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-                <p class="carousel-name">{{ slide.name }}</p>
-              </div>
+      <!-- Sol Alt Carousel -->
+      <div class="carousel-container bottom-left">
+        <div class="carousel">
+          <button class="carousel-button prev" @click="prevSlide(3)">
+            <
+          </button>
+          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[3] * 100}%)` }">
+            <div v-for="(slide, index) in cityData.carousels[3]" :key="index" class="carousel-slide">
+              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
+              <p class="carousel-name">{{ slide.name }}</p>
             </div>
-            <button class="carousel-button next" @click="nextSlide(3)">
-              >
-            </button>
           </div>
+          <button class="carousel-button next" @click="nextSlide(3)">
+            >
+          </button>
         </div>
+      </div>
     </div>
 
     <!-- Carouseller gizlendiğinde gösterilecek animasyonlu yazı -->
     <div v-else class="welcome-container">
-      <h2 class="welcome-text">Welcome to {{ cityName }}</h2>
+      <h2 class="welcome-text">{{ $t('city.welcome', { city: cityName }) }}</h2>
     </div>
 
     <!-- Modal (Resme tıklandığında açılacak pop-up) -->
@@ -100,7 +94,7 @@
         <img :src="selectedSlide.image" :alt="selectedSlide.name" class="modal-image" />
         <h3 class="modal-name">{{ selectedSlide.name }}</h3>
         <p class="modal-description">{{ selectedSlide.description }}</p>
-        <button class="modal-close-button" @click="closeModal">Kapat</button>
+        <button class="modal-close-button" @click="closeModal">{{ $t('city.close') }}</button>
       </div>
     </div>
   </div>
@@ -215,19 +209,6 @@ export default {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   margin: 0rem 0;
   z-index: 2;
-}
-
-/* Hava Durumu Bilgisi */
-.weather-info {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  font-size: 1rem;
-  z-index: 3;
 }
 
 /* Carousel Grid */
