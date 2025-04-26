@@ -13,6 +13,7 @@
 
       <ul class="nav-links">
         <router-link to="/">{{ $t('navbar.home') }}</router-link>
+        <router-link to="/wohin">{{ $t('navbar.routeMap') }}</router-link>
 
         <!-- Kullanıcı giriş yapmadıysa -->
         <template v-if="!user">
@@ -51,7 +52,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import HomeWImage from '@/assets/homeW.jpeg';
@@ -66,16 +67,15 @@ export default defineComponent({
     const customBackground = ref(null);
     const weather = ref(null);
 
-    onMounted(() => {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        user.value = JSON.parse(storedUser);
-      }
-      const savedLocale = localStorage.getItem('locale');
-      if (savedLocale) {
-        locale.value = savedLocale;
-      }
-    });
+    // Kullanıcı ve dil ayarlarını yükle
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      user.value = JSON.parse(storedUser);
+    }
+    const savedLocale = localStorage.getItem('locale');
+    if (savedLocale) {
+      locale.value = savedLocale;
+    }
 
     const updateUser = (userData) => {
       user.value = userData;
@@ -102,24 +102,19 @@ export default defineComponent({
     };
 
     const backgroundImage = computed(() => {
-      if (route.path.startsWith('/city') && customBackground.value) {
-        return customBackground.value;
-      }
-      return HomeWImage;
+      return route.path.startsWith('/city') && customBackground.value ? customBackground.value : HomeWImage;
     });
 
     const backgroundSize = computed(() => {
-      if (route.path.startsWith('/city')) {
-        return 'cover';
-      }
-      return '100% auto';
+      return route.path.startsWith('/city') ? 'cover' : '100% auto';
     });
 
     const backgroundPosition = computed(() => {
-      if (route.path.startsWith('/city')) {
-        return 'center';
-      }
-      return 'center top';
+      return route.path.startsWith('/city') ? 'center' : 'center top';
+    });
+
+    const isAdminPage = computed(() => {
+      return route.path.startsWith('/admin');
     });
 
     return {
@@ -134,12 +129,8 @@ export default defineComponent({
       backgroundPosition,
       route,
       changeLanguage,
+      isAdminPage,
     };
-  },
-  computed: {
-    isAdminPage() {
-      return this.$route.path.startsWith('/admin');
-    },
   },
 });
 </script>
@@ -220,7 +211,6 @@ export default defineComponent({
   width: 40px;
   height: 40px;
   margin-right: 0.1rem;
-  margin-top: 0rem;
 }
 
 /* Dil seçici (Bayraklar) */

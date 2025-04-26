@@ -40,6 +40,26 @@ class Streckentabelle(db.Model):
     train_classification = db.Column(db.String(50))
 
 
+class Stations(db.Model):
+    __tablename__ = 'stations'
+    id = db.Column(db.Integer, primary_key=True)
+    station_name = db.Column(db.String(100), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+
+
+class Sollstrecken(db.Model):
+    __tablename__ = 'sollstrecken'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    train_classification = db.Column(db.String(50))
+    train_number_from = db.Column(db.String(50))
+    order_from = db.Column(db.Integer)
+    station_name_from = db.Column(db.String(100), nullable=False)
+    train_number_to = db.Column(db.String(50))
+    order_to = db.Column(db.Integer)
+    station_name_to = db.Column(db.String(100), nullable=False)
+
+
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
@@ -145,8 +165,164 @@ def get_stations():
         stations = set([station[0] for station in from_stations] + [station[0] for station in to_stations])
         stations = sorted(list(stations))
 
+        print(f"Returning {len(stations)} stations from /api/stations")
         return jsonify({"stations": stations})
     except Exception as e:
+        print(f"Error in get_stations: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/station_coordinates', methods=['GET'])
+def get_station_coordinates():
+    try:
+        stations = db.session.query(Stations).all()
+        station_list = [
+            {
+                "id": station.id,
+                "station_name": station.station_name,
+                "latitude": station.latitude,
+                "longitude": station.longitude
+            }
+            for station in stations
+        ]
+        print(f"Returning {len(station_list)} stations from /api/station_coordinates: {station_list[:5]}")  # İlk 5 istasyonu logla
+        return jsonify({"stations": station_list})
+    except Exception as e:
+        print(f"Error in get_station_coordinates: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/sollstrecken_stations', methods=['GET'])
+def get_sollstrecken_stations():
+    try:
+        from_stations = db.session.query(Sollstrecken.station_name_from).distinct().all()
+        to_stations = db.session.query(Sollstrecken.station_name_to).distinct().all()
+
+        stations = set([station[0] for station in from_stations] + [station[0] for station in to_stations])
+        stations = sorted(list(stations))
+
+        print(f"Returning {len(stations)} stations from /api/sollstrecken_stations")
+        return jsonify({"stations": stations})
+    except Exception as e:
+        print(f"Error in get_sollstrecken_stations: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/drawroute', methods=['POST'])
+def draw_route():
+    data = request.json
+    from_station = data.get('from_station', '').strip()
+    to_station = data.get('to_station', '').strip()
+
+    if not from_station or not to_station:
+        return jsonify({"error": "Missing required fields: from_station and to_station."}), 400
+
+    try:
+        # Aynı tren numarasıyla güzergahı bul
+        routes = db.session.query(Sollstrecken).filter(
+            Sollstrecken.station_name_from == from_station,
+            Sollstrecken.station_name_to == to_station,
+            Sollstrecken.train_number_from == Sollstrecken.train_number_to
+        ).all()
+
+        if not routes:
+            # Doğrudan rota yoksa, ara duraklarla güzergah bul
+            from_trains = db.session.query(Sollstrecken.train_number_from).filter(
+                Sollstrecken.station_name_from == from_station
+            ).distinct().all()
+            to_trains = db.session.query(Sollstrecken.train_number_to).filter(
+                Sollstrecken.station_name_to == to_station
+            ).distinct().all()
+
+            common_trains = set([t[0] for t in from_trains]) & set([t[0] for t in to_trains])
+            if not common_trains:
+                return jsonify({"error": "No route found between the stations."}), 404
+
+            train_number = list(common_trains)[0]  # İlk ortak tren numarasını al
+            print(f"Selected train number: {train_number}")
+
+            # Tren numarasına göre tüm durakları sırayla al
+            stops = db.session.query(Sollstrecken).filter(
+                Sollstrecken.train_number_from == train_number,
+                Sollstrecken.train_number_to == train_number
+            ).order_by(Sollstrecken.order_from).all()
+
+            # Başlangıç ve bitiş duraklarının sıralarını bul
+            start_order = None
+            end_order = None
+            for stop in stops:
+                if stop.station_name_from == from_station:
+                    start_order = stop.order_from
+                if stop.station_name_to == to_station:
+                    end_order = stop.order_to
+
+            if start_order is None or end_order is None or start_order >= end_order:
+                return jsonify({"error": "Invalid route: stations not in correct order."}), 404
+
+            # Güzergah duraklarını filtrele
+            route_stops = []
+            for stop in stops:
+                if stop.order_from >= start_order and stop.order_to <= end_order:
+                    route_stops.append({
+                        "station_name": stop.station_name_from,
+                        "order": stop.order_from
+                    })
+                    if stop.order_to == end_order:
+                        route_stops.append({
+                            "station_name": stop.station_name_to,
+                            "order": stop.order_to
+                        })
+
+            # Sıralı durak listesi oluştur
+            route_stops = sorted(route_stops, key=lambda x: x["order"])
+            unique_stations = []
+            seen_stations = set()
+            for stop in route_stops:
+                if stop["station_name"] not in seen_stations:
+                    unique_stations.append(stop["station_name"])
+                    seen_stations.add(stop["station_name"])
+
+        else:
+            # Doğrudan rota varsa
+            unique_stations = [from_station, to_station]
+
+        # Koordinatları al
+        station_coords = {station.station_name: {"latitude": station.latitude, "longitude": station.longitude}
+                         for station in db.session.query(Stations).all()}
+
+        coordinates = []
+        for station_name in unique_stations:
+            if station_name in station_coords:
+                coordinates.append({
+                    "station_name": station_name,
+                    "latitude": station_coords[station_name]["latitude"],
+                    "longitude": station_coords[station_name]["longitude"]
+                })
+            else:
+                print(f"Warning: Coordinates not found for station {station_name}")
+
+        if not coordinates:
+            return jsonify({"error": "No coordinates found for the route."}), 404
+
+        # Basit bir route objesi oluştur
+        route = {
+            "train_number": train_number if 'train_number' in locals() else routes[0].train_number_from if routes else "Unknown",
+            "stops": [
+                {
+                    "station_name": coord["station_name"],
+                    "planned_arrival": None,
+                    "planned_departure": None,
+                    "delay": None
+                } for coord in coordinates
+            ]
+        }
+
+        print(f"Returning route with {len(coordinates)} stops")
+        return jsonify({
+            "route": route,
+            "coordinates": coordinates
+        })
+
+    except Exception as e:
+        print(f"Error in draw_route: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -156,16 +332,16 @@ def get_trains():
     from_station = data.get('from_station', '').strip()
     to_station = data.get('to_station', '').strip()
     travel_date = data.get('travel_date')
-    travel_time = data.get('travel_time')  # Yeni: Saat ve dakika
+    travel_time = data.get('travel_time')
 
-    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}, time={travel_time}")  # Debug
+    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}, time={travel_time}")
 
     if not from_station or not to_station or not travel_date:
         return jsonify({"error": "Missing required fields."}), 400
 
     try:
         travel_date_obj = datetime.strptime(travel_date, "%Y-%m-%d").date()
-        print(f"Parsed date: {travel_date_obj}")  # Debug
+        print(f"Parsed date: {travel_date_obj}")
 
         query = db.session.query(Streckentabelle).filter(
             Streckentabelle.station_name_from == from_station,
@@ -173,15 +349,14 @@ def get_trains():
             Streckentabelle.planned_arrival_date_from == travel_date_obj
         )
 
-        # Eğer saat bilgisi gönderilmişse, saate göre filtrele
         if travel_time:
             travel_time_obj = datetime.strptime(travel_time, "%H:%M").time()
-            print(f"Parsed time: {travel_time_obj}")  # Debug
+            print(f"Parsed time: {travel_time_obj}")
             query = query.filter(Streckentabelle.planned_departure_from >= travel_time_obj)
 
         trains = query.all()
 
-        print(f"Bulunan trenler: {len(trains)}")  # Debug
+        print(f"Bulunan trenler: {len(trains)}")
 
         train_list = [
             {
@@ -200,25 +375,24 @@ def get_trains():
 
         return jsonify({"trains": train_list})
     except Exception as e:
-        print(f"Hata: {str(e)}")  # Debug
+        print(f"Hata: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/route_plan', methods=['POST'])
 def route_plan():
     data = request.json
     from_station = data.get('from_station', '').strip()
     to_station = data.get('to_station', '').strip()
-    travel_date = data.get('travel_date')  # Format: YYYY-MM-DD
-    travel_time = data.get('travel_time')  # Format: HH:MM
+    travel_date = data.get('travel_date')
+    travel_time = data.get('travel_time')
 
-    # Gerekli alanların kontrolü
     if not from_station or not to_station or not travel_date or not travel_time:
         return jsonify({"error": "Missing required fields."}), 400
 
     try:
-        # 1. arkadaşın API'sine veriyi gönder
         first_friend_response = requests.post(
-            "http://first-friend-service:5001/api/route_planung",  # 1. arkadaşın API'si
+            "http://first-friend-service:5001/api/route_planung",
             json={
                 "from_station": from_station,
                 "to_station": to_station,
@@ -232,15 +406,13 @@ def route_plan():
         if first_friend_response.status_code != 200:
             return jsonify({"error": "Error in route planning service."}), 500
 
-        # 1. arkadaşın API'sinden gelen rota verisini al
         detailed_routes = first_friend_response.json().get("routes", [])
 
         if not detailed_routes:
             return jsonify({"error": "No routes found."}), 404
 
-        # 2. arkadaşın API'sine veriyi gönder
         second_friend_response = requests.post(
-            "http://second-friend-service:5002/api/predict_delays",  # 2. arkadaşın API'si
+            "http://second-friend-service:5002/api/predict_delays",
             json={"routes": detailed_routes},
             headers={"Content-Type": "application/json"},
             timeout=10
@@ -249,10 +421,8 @@ def route_plan():
         if second_friend_response.status_code != 200:
             return jsonify({"error": "Error in delay prediction service."}), 500
 
-        # 2. arkadaşın API'sinden gelen sonucu al
         final_routes = second_friend_response.json().get("routes", [])
 
-        # Frontend'e dönüş
         return jsonify({"routes": final_routes})
 
     except requests.exceptions.RequestException as e:

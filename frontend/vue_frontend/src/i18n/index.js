@@ -9,8 +9,24 @@ const messages = {
       logout: 'Log Out',
       humidity: 'Humidity',
       wind: 'Wind',
+      routeMap: "Where to?",
       weatherLoading: 'Weather is loading...'
     },
+    routemap: {
+    title: "Find Your Route",
+    from: "From",
+    to: "To",
+    fromPlaceholder: "Enter starting station",
+    toPlaceholder: "Enter destination station",
+    search: "Show Route",
+    routeInfo: "Route Details",
+    trainNumber: "Train Number",
+    stations: "Stations",
+    invalidSelection: "Please select valid stations",
+    errorFetching: "Error fetching route",
+    errorLoadingStations: "Error loading stations",
+    errorLoadingCoordinates: "Error loading coordinates"
+  },
     home: {
       slogan: 'Book your train tickets, plan your trip',
       search: 'Search',
@@ -340,8 +356,22 @@ const messages = {
       logout: 'Abmelden',
       humidity: 'Luftfeuchtigkeit',
       wind: 'Wind',
+      routeMap: "Wohin?",
       weatherLoading: 'Wetter wird geladen...'
     },
+    routemap: {
+    title: "Reiseroute",
+    from: "Von",
+    to: "Nach",
+    fromPlaceholder: "Startbahnhof",
+    toPlaceholder: "Zielbahnhof",
+    search: "Route anzeigen",
+    invalidSelection: "Bitte wählen Sie unterschiedliche Start- und Zielbahnhöfe.",
+    errorFetching: "Fehler beim Abrufen der Route",
+    routeInfo: "Routeninformationen",
+    trainNumber: "Zugnummer",
+    stations: "Stationen"
+  },
     home: {
       slogan: 'Buchen Sie Ihre Zugtickets, planen Sie Ihre Reise',
       search: 'Suchen',
