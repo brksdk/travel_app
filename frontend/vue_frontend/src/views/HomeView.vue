@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="home-container">
     <div class="content-wrapper">
@@ -108,7 +109,7 @@
       <h2>{{ $t('home.popularCities') }}</h2>
       <div class="city-grid">
         <router-link v-for="city in cities" :key="city" :to="`/city/${city}`" class="city">
-          {{ city }}
+          {{ $t(`cities.${city}`) }}
         </router-link>
       </div>
     </section>
@@ -140,10 +141,10 @@ export default {
   methods: {
     async loadStations() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/stations", {
-          method: "GET",
+        const response = await fetch('http://127.0.0.1:5000/api/stations', {
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
@@ -154,11 +155,10 @@ export default {
         }
 
         this.stations = data.stations || [];
-        console.log("Yüklenen şehirler:", this.stations);
       } catch (error) {
-        console.error("Şehirleri çekerken hata:", error);
+        console.error('Şehirleri çekerken hata:', error);
         this.errorMessage = error.message;
-        this.stations = [""];
+        this.stations = [''];
       }
     },
     swapCities() {
@@ -170,12 +170,10 @@ export default {
     },
     filterStations(field) {
       const query = (field === 'from' ? this.fromCity : this.toCity).toLowerCase().trim();
-      console.log(`Filtreleme: ${field}, Query: ${query}`);
       if (query) {
-        const filtered = this.stations.filter(station =>
-            station && station.toLowerCase().startsWith(query)
+        const filtered = this.stations.filter((station) =>
+          station && station.toLowerCase().startsWith(query)
         );
-        console.log("Filtrelenmiş şehirler:", filtered);
         if (field === 'from') {
           this.filteredFromStations = filtered;
         } else {
@@ -208,13 +206,12 @@ export default {
         travel_date: this.selectedDate,
         travel_time: this.selectedTime,
       };
-      console.log("Gönderilen veri:", formData);
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/trains", {
-          method: "POST",
+        const response = await fetch('http://127.0.0.1:5000/api/trains', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(formData),
         });
@@ -226,11 +223,8 @@ export default {
         }
 
         this.trainResults = data.trains || [];
-        if (this.trainResults.length === 0) {
-          console.log("Hiç tren bulunamadı, veri doğru mu?");
-        }
       } catch (error) {
-        console.error("Tren arama hatası:", error);
+        console.error('Tren arama hatası:', error);
         this.errorMessage = error.message;
         this.trainResults = [];
       }
@@ -403,10 +397,10 @@ export default {
   margin-right: auto;
   margin-left: 4rem;
   margin-top: auto;
-  margin-bottom: 2rem
+  margin-bottom: 2rem;
 }
 
-.cities h2{
+.cities h2 {
   font-weight: bold;
 }
 
@@ -468,3 +462,4 @@ export default {
   background-color: #e0e0e0;
 }
 </style>
+```

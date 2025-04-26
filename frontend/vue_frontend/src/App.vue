@@ -1,3 +1,4 @@
+```vue
 <template>
   <div id="app" :style="{ backgroundImage: `url(${backgroundImage})`, backgroundSize: backgroundSize, backgroundPosition: backgroundPosition }">
     <nav class="navbar" v-if="!isAdminPage">
@@ -26,11 +27,23 @@
           <button @click="logout">{{ $t('navbar.logout') }}</button>
         </div>
 
-        <!-- Dil seçici -->
-        <select v-model="$i18n.locale" @change="changeLanguage" class="language-selector">
-          <option value="en">English</option>
-          <option value="de">Deutsch</option>
-        </select>
+        <!-- Dil seçici (Bayraklar) -->
+        <div class="language-selector">
+          <img
+            src="@/assets/uk-flag.png"
+            alt="English"
+            class="flag-icon"
+            :class="{ active: $i18n.locale === 'en' }"
+            @click="changeLanguage('en')"
+          />
+          <img
+            src="@/assets/de-flag.png"
+            alt="Deutsch"
+            class="flag-icon"
+            :class="{ active: $i18n.locale === 'de' }"
+            @click="changeLanguage('de')"
+          />
+        </div>
       </ul>
     </nav>
     <router-view @user-logged-in="updateUser" @update-background="updateBackground" @update-weather="updateWeather"></router-view>
@@ -38,35 +51,41 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { defineComponent, ref, onMounted, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import HomeWImage from '@/assets/homeW.jpeg';
 
 export default defineComponent({
-  name: "App",
+  name: 'App',
   setup() {
     const router = useRouter();
     const route = useRoute();
+    const { locale } = useI18n();
     const user = ref(null);
     const customBackground = ref(null);
     const weather = ref(null);
 
     onMounted(() => {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = localStorage.getItem('user');
       if (storedUser) {
         user.value = JSON.parse(storedUser);
+      }
+      const savedLocale = localStorage.getItem('locale');
+      if (savedLocale) {
+        locale.value = savedLocale;
       }
     });
 
     const updateUser = (userData) => {
       user.value = userData;
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(userData));
     };
 
     const logout = () => {
-      localStorage.removeItem("user");
+      localStorage.removeItem('user');
       user.value = null;
-      router.push("/login");
+      router.push('/login');
     };
 
     const updateBackground = (image) => {
@@ -77,29 +96,30 @@ export default defineComponent({
       weather.value = weatherData;
     };
 
-    const changeLanguage = () => {
-      localStorage.setItem('locale', this.$i18n.locale); // Dil tercihini kaydet
+    const changeLanguage = (newLocale) => {
+      locale.value = newLocale;
+      localStorage.setItem('locale', newLocale);
     };
 
     const backgroundImage = computed(() => {
-      if (route.path.startsWith("/city") && customBackground.value) {
+      if (route.path.startsWith('/city') && customBackground.value) {
         return customBackground.value;
       }
       return HomeWImage;
     });
 
     const backgroundSize = computed(() => {
-      if (route.path.startsWith("/city")) {
-        return "cover";
+      if (route.path.startsWith('/city')) {
+        return 'cover';
       }
-      return "100% auto";
+      return '100% auto';
     });
 
     const backgroundPosition = computed(() => {
-      if (route.path.startsWith("/city")) {
-        return "center";
+      if (route.path.startsWith('/city')) {
+        return 'center';
       }
-      return "center top";
+      return 'center top';
     });
 
     return {
@@ -118,7 +138,7 @@ export default defineComponent({
   },
   computed: {
     isAdminPage() {
-      return this.$route.path.startsWith("/admin");
+      return this.$route.path.startsWith('/admin');
     },
   },
 });
@@ -128,7 +148,7 @@ export default defineComponent({
 #app {
   min-height: 100vh;
   background-repeat: no-repeat;
-  background-color: #f0f0f0; /* Resim yüklenemezse varsayılan arka plan rengi */
+  background-color: #f0f0f0;
 }
 
 /* Navbar */
@@ -147,7 +167,7 @@ export default defineComponent({
   list-style: none;
   padding: 0;
   margin: 0;
-  margin-left: auto; /* Bağlantıları her zaman sağa hizala */
+  margin-left: auto;
 }
 
 /* Bağlantılar ve butonlar */
@@ -203,19 +223,31 @@ export default defineComponent({
   margin-top: 0rem;
 }
 
-/* Dil seçici */
+/* Dil seçici (Bayraklar) */
 .language-selector {
-  background: rgba(255, 255, 255, 0.8);
-  color: #333;
-  border: none;
-  padding: 0.5rem;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-.language-selector:focus {
-  outline: none;
+.flag-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+  border-radius: 3px;
+  pointer-events: auto;
+}
+
+.flag-icon:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.flag-icon.active {
+  opacity: 1;
+  border: 1px solid #fff;
 }
 </style>
+```

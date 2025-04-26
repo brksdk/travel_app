@@ -1,4 +1,3 @@
-
 const getImageMap = () => {
   const modules = import.meta.glob('@/assets/cities/**/*.{jpeg,jpg,png,webp,jfif}', { eager: true });
 
@@ -30,25 +29,25 @@ export const citiesData = {
     background: getCityImage('Berlin'),
     carousels: [
       [
-        { image: images["brandenburg3"], name: "Brandenburg Tor", description: "Das Brandenburg Tor ist ein historisches Wahrzeichen Berlins und ein Symbol der deutschen Einheit." },
-        { image: images["brandenburg4"] },
-        { image: images["brandenburg5"] }
+        { image: images["brandenburg3"], name: "sights.berlin.brandenburg_tor", description: "sights.berlin.brandenburg_tor_desc" },
+        { image: images["brandenburg4"], name: "sights.berlin.brandenburg_tor", description: "sights.berlin.brandenburg_tor_desc" },
+        { image: images["brandenburg5"], name: "sights.berlin.brandenburg_tor", description: "sights.berlin.brandenburg_tor_desc" }
       ],
       [
-        { image: images["reichstag1"], name: "Reichstag", description: "Der Reichstag ist der Sitz des Deutschen Bundestags und bekannt für seine gläserne Kuppel." },
-        { image: images["reichstag2"] },
-        { image: images["reichstag3"] }
+        { image: images["reichstag1"], name: "sights.berlin.reichstag", description: "sights.berlin.reichstag_desc" },
+        { image: images["reichstag2"], name: "sights.berlin.reichstag", description: "sights.berlin.reichstag_desc" },
+        { image: images["reichstag3"], name: "sights.berlin.reichstag", description: "sights.berlin.reichstag_desc" }
       ],
       [
-        { image: images["fernsehturm1"], name: "Fernsehturm", description: "Der Fernsehturm ist das höchste Bauwerk Deutschlands und bietet eine atemberaubende Aussicht über Berlin." },
-        { image: images["fernsehturm2"] },
-        { image: images["fernsehturm3"] }
+        { image: images["fernsehturm1"], name: "sights.berlin.fernsehturm", description: "sights.berlin.fernsehturm_desc" },
+        { image: images["fernsehturm2"], name: "sights.berlin.fernsehturm", description: "sights.berlin.fernsehturm_desc" },
+        { image: images["fernsehturm3"], name: "sights.berlin.fernsehturm", description: "sights.berlin.fernsehturm_desc" }
       ],
       [
-        { image: images["museum1"], name: "Museumsinsel", description: "Die Museumsinsel beherbergt eine Sammlung weltberühmter Museen und ist UNESCO-Welterbe." },
-        { image: images["museum2"] },
-        { image: images["museum3"] },
-        { image: images["museum4"] }
+        { image: images["museum1"], name: "sights.berlin.museumsinsel", description: "sights.berlin.museumsinsel_desc" },
+        { image: images["museum2"], name: "sights.berlin.museumsinsel", description: "sights.berlin.museumsinsel_desc" },
+        { image: images["museum3"], name: "sights.berlin.museumsinsel", description: "sights.berlin.museumsinsel_desc" },
+        { image: images["museum4"], name: "sights.berlin.museumsinsel", description: "sights.berlin.museumsinsel_desc" }
       ],
     ]
   },
@@ -56,23 +55,23 @@ export const citiesData = {
     background: getCityImage('Munich'),
     carousels: [
       [
-        { image: images["marienplatz1"], name: "Marienplatz", description: "Der Marienplatz ist das Herz Münchens mit dem berühmten Glockenspiel im Neuen Rathaus." },
-        { image: images["marienplatz2"] },
-        { image: images["marienplatz3"] },
-        { image: images["marienplatz4"]  }
+        { image: images["marienplatz1"], name: "sights.munich.marienplatz", description: "sights.munich.marienplatz_desc" },
+        { image: images["marienplatz2"], name: "sights.munich.marienplatz", description: "sights.munich.marienplatz_desc" },
+        { image: images["marienplatz3"], name: "sights.munich.marienplatz", description: "sights.munich.marienplatz_desc" },
+        { image: images["marienplatz4"], name: "sights.munich.marienplatz", description: "sights.munich.marienplatz_desc" }
       ],
       [
-        { image: images["nymphenburg1"], name: "Nymphenburg Schloss", description: "Das Schloss Nymphenburg ist eine prächtige barocke Residenz mit wunderschönen Gärten." },
-        { image: images["nymphenburg2"] },
-        { image: images["nymphenburg3"] }
+        { image: images["nymphenburg1"], name: "sights.munich.nymphenburg_schloss", description: "sights.munich.nymphenburg_schloss_desc" },
+        { image: images["nymphenburg2"], name: "sights.munich.nymphenburg_schloss", description: "sights.munich.nymphenburg_schloss_desc" },
+        { image: images["nymphenburg3"], name: "sights.munich.nymphenburg_schloss", description: "sights.munich.nymphenburg_schloss_desc" }
       ],
       [
-        { image: images["eng1"], name: "Englischer Garten", description: "Der Englische Garten ist einer der größten Stadtparks der Welt und ein beliebter Treffpunkt." },
-        { image: images["eng2"] }
+        { image: images["eng1"], name: "sights.munich.englischer_garten", description: "sights.munich.englischer_garten_desc" },
+        { image: images["eng2"], name: "sights.munich.englischer_garten", description: "sights.munich.englischer_garten_desc" }
       ],
       [
-        { image: images["vm1"], name: "Viktualienmarkt", description: "Der Viktualienmarkt ist ein traditioneller Markt mit frischen Lebensmitteln und bayerischen Spezialitäten." },
-        { image: images["vm2"] }
+        { image: images["vm1"], name: "sights.munich.viktualienmarkt", description: "sights.munich.viktualienmarkt_desc" },
+        { image: images["vm2"], name: "sights.munich.viktualienmarkt", description: "sights.munich.viktualienmarkt_desc" }
       ],
     ]
   },
@@ -80,21 +79,21 @@ export const citiesData = {
     background: getCityImage('Hamburg'),
     carousels: [
       [
-        { image: images["elb1"], name: "Elbphilharmonie", description: "Die Elbphilharmonie ist ein modernes Konzerthaus an der Elbe mit einzigartiger Architektur." },
-        { image: images["elb2"]},
-        { image: images["elb3"] }
+        { image: images["elb1"], name: "sights.hamburg.elbphilharmonie", description: "sights.hamburg.elbphilharmonie_desc" },
+        { image: images["elb2"], name: "sights.hamburg.elbphilharmonie", description: "sights.hamburg.elbphilharmonie_desc" },
+        { image: images["elb3"], name: "sights.hamburg.elbphilharmonie", description: "sights.hamburg.elbphilharmonie_desc" }
       ],
       [
-        { image: images["ss1"], name: "Speicherstadt", description: "Die Speicherstadt ist das größte zusammenhängende Lagerhausensemble der Welt und UNESCO-Welterbe." },
-        { image: images["ss2"] },
-        { image: images["ss3"]}
+        { image: images["ss1"], name: "sights.hamburg.speicherstadt", description: "sights.hamburg.speicherstadt_desc" },
+        { image: images["ss2"], name: "sights.hamburg.speicherstadt", description: "sights.hamburg.speicherstadt_desc" },
+        { image: images["ss3"], name: "sights.hamburg.speicherstadt", description: "sights.hamburg.speicherstadt_desc" }
       ],
       [
-        { image: images["reeperbahn1"], name: "Reeperbahn - Neonlichter", description: "Die neonbeleuchteten Straßen der Reeperbahn bei Nacht." }
+        { image: images["reeperbahn1"], name: "sights.hamburg.reeperbahn", description: "sights.hamburg.reeperbahn_desc" }
       ],
       [
-        { image: images["michelis1"], name: "St. Michaelis Kirche", description: "Die St. Michaelis Kirche, auch 'Michel' genannt, ist ein Wahrzeichen Hamburgs." },
-        { image: images["michelis2"]}
+        { image: images["michelis1"], name: "sights.hamburg.st_michaelis_kirche", description: "sights.hamburg.st_michaelis_kirche_desc" },
+        { image: images["michelis2"], name: "sights.hamburg.st_michaelis_kirche", description: "sights.hamburg.st_michaelis_kirche_desc" }
       ],
     ]
   },
@@ -102,21 +101,21 @@ export const citiesData = {
     background: getCityImage('Cologne'),
     carousels: [
       [
-        { image: images["kd1"], name: "Kölner Dom", description: "Der Kölner Dom ist eine gotische Kathedrale und das bekannteste Wahrzeichen Kölns." },
-        { image: images["kd2"]},
-        { image: images["kd3"] },
-        { image: images["kd4"] }
+        { image: images["kd1"], name: "sights.cologne.kolner_dom", description: "sights.cologne.kolner_dom_desc" },
+        { image: images["kd2"], name: "sights.cologne.kolner_dom", description: "sights.cologne.kolner_dom_desc" },
+        { image: images["kd3"], name: "sights.cologne.kolner_dom", description: "sights.cologne.kolner_dom_desc" },
+        { image: images["kd4"], name: "sights.cologne.kolner_dom", description: "sights.cologne.kolner_dom_desc" }
       ],
       [
-        { image: images["rheinp1"], name: "Rheinpromenade", description: "Die Rheinpromenade bietet malerische Ausblicke auf den Rhein und die Altstadt." },
-        { image: images["rheinp2"]}
+        { image: images["rheinp1"], name: "sights.cologne.rheinpromenade", description: "sights.cologne.rheinpromenade_desc" },
+        { image: images["rheinp2"], name: "sights.cologne.rheinpromenade", description: "sights.cologne.rheinpromenade_desc" }
       ],
       [
-        { image: images["hb1"], name: "Hohenzollernbrücke", description: "Die Hohenzollernbrücke ist bekannt für ihre Liebesschlösser und die Aussicht auf den Dom." },
-        { image: images["hb2"]}
+        { image: images["hb1"], name: "sights.cologne.hohenzollernbrucke", description: "sights.cologne.hohenzollernbrucke_desc" },
+        { image: images["hb2"], name: "sights.cologne.hohenzollernbrucke", description: "sights.cologne.hohenzollernbrucke_desc" }
       ],
       [
-        { image: images["ludwig1"], name: "Museum Ludwig", description: "Eine Ausstellungshalle im Museum Ludwig." }
+        { image: images["ludwig1"], name: "sights.cologne.museum_ludwig", description: "sights.cologne.museum_ludwig_desc" }
       ],
     ]
   },
@@ -124,20 +123,20 @@ export const citiesData = {
     background: getCityImage('Frankfurt'),
     carousels: [
       [
-        { image: images["romer1"], name: "Römer", description: "Der Römer ist das historische Rathaus Frankfurts mit seiner charakteristischen Treppengiebelfassade." },
-        { image: images["romer2"]  },
-        { image: images["romer3"] }
+        { image: images["romer1"], name: "sights.frankfurt.romer", description: "sights.frankfurt.romer_desc" },
+        { image: images["romer2"], name: "sights.frankfurt.romer", description: "sights.frankfurt.romer_desc" },
+        { image: images["romer3"], name: "sights.frankfurt.romer", description: "sights.frankfurt.romer_desc" }
       ],
       [
-        { image: images["tower1"], name: "Main Tower", description: "Der Main Tower bietet eine spektakuläre Aussicht auf die Skyline Frankfurts." },
-        { image: images["tower2"]  }
+        { image: images["tower1"], name: "sights.frankfurt.main_tower", description: "sights.frankfurt.main_tower_desc" },
+        { image: images["tower2"], name: "sights.frankfurt.main_tower", description: "sights.frankfurt.main_tower_desc" }
       ],
       [
-        { image: images["pg1"], name: "Palmengarten", description: "Der Palmengarten ist ein botanischer Garten mit exotischen Pflanzen und Gewächshäusern." },
-        { image: images["pg2"]}
+        { image: images["pg1"], name: "sights.frankfurt.palmengarten", description: "sights.frankfurt.palmengarten_desc" },
+        { image: images["pg2"], name: "sights.frankfurt.palmengarten", description: "sights.frankfurt.palmengarten_desc" }
       ],
       [
-        { image: images["sm1"], name: "Städel Museum", description: "Das Städel Museum zeigt eine beeindruckende Sammlung europäischer Kunst." },
+        { image: images["sm1"], name: "sights.frankfurt.stadel_museum", description: "sights.frankfurt.stadel_museum_desc" },
       ],
     ]
   },
@@ -145,24 +144,24 @@ export const citiesData = {
     background: getCityImage('Stuttgart'),
     carousels: [
       [
-        { image: images["sp1"], name: "Schlossplatz", description: "Der Schlossplatz ist der zentrale Platz Stuttgarts mit dem Neuen Schloss." },
-        { image: images["sp2"] },
-        { image: images["sp3"] }
+        { image: images["sp1"], name: "sights.stuttgart.schlossplatz", description: "sights.stuttgart.schlossplatz_desc" },
+        { image: images["sp2"], name: "sights.stuttgart.schlossplatz", description: "sights.stuttgart.schlossplatz_desc" },
+        { image: images["sp3"], name: "sights.stuttgart.schlossplatz", description: "sights.stuttgart.schlossplatz_desc" }
       ],
       [
-        { image: images["mercedes1"], name: "Mercedes-Benz Museum", description: "Das Mercedes-Benz Museum zeigt die Geschichte des Automobilherstellers." },
-        { image: images["mercedes2"] },
-        { image: images["mercedes3"] },
-        { image: images["mercedes4"]}
+        { image: images["mercedes1"], name: "sights.stuttgart.mercedes_benz_museum", description: "sights.stuttgart.mercedes_benz_museum_desc" },
+        { image: images["mercedes2"], name: "sights.stuttgart.mercedes_benz_museum", description: "sights.stuttgart.mercedes_benz_museum_desc" },
+        { image: images["mercedes3"], name: "sights.stuttgart.mercedes_benz_museum", description: "sights.stuttgart.mercedes_benz_museum_desc" },
+        { image: images["mercedes4"], name: "sights.stuttgart.mercedes_benz_museum", description: "sights.stuttgart.mercedes_benz_museum_desc" }
       ],
       [
-        { image: images["pm1"], name: "Porsche Museum", description: "Das Porsche Museum widmet sich der Geschichte der Sportwagenmarke Porsche." },
-        { image: images["pm2"] }
+        { image: images["pm1"], name: "sights.stuttgart.porsche_museum", description: "sights.stuttgart.porsche_museum_desc" },
+        { image: images["pm2"], name: "sights.stuttgart.porsche_museum", description: "sights.stuttgart.porsche_museum_desc" }
       ],
       [
-        { image: images["wilhelma1"], name: "Wilhelma", description: "Die Wilhelma ist ein zoologisch-botanischer Garten mit einer Vielzahl von Tieren und Pflanzen." },
-        { image: images["wilhelma2"]},
-        { image: images["wilhelma3"] }
+        { image: images["wilhelma1"], name: "sights.stuttgart.wilhelma", description: "sights.stuttgart.wilhelma_desc" },
+        { image: images["wilhelma2"], name: "sights.stuttgart.wilhelma", description: "sights.stuttgart.wilhelma_desc" },
+        { image: images["wilhelma3"], name: "sights.stuttgart.wilhelma", description: "sights.stuttgart.wilhelma_desc" }
       ],
     ]
   },
@@ -170,21 +169,21 @@ export const citiesData = {
     background: getCityImage('Düsseldorf'),
     carousels: [
       [
-        { image: images["turm"], name: "Rheinturm", description: "Der Rheinturm ist das höchste Bauwerk Düsseldorfs mit einer Aussichtsplattform." },
-        { image: images["turm2"]  }
+        { image: images["turm"], name: "sights.dusseldorf.rheinturm", description: "sights.dusseldorf.rheinturm_desc" },
+        { image: images["turm2"], name: "sights.dusseldorf.rheinturm", description: "sights.dusseldorf.rheinturm_desc" }
       ],
       [
-        { image: images["altst"], name: "Altstadt", description: "Die Düsseldorfer Altstadt ist bekannt als die 'längste Theke der Welt'." },
-        { image: images["altst2"] }
+        { image: images["altst"], name: "sights.dusseldorf.altstadt", description: "sights.dusseldorf.altstadt_desc" },
+        { image: images["altst2"], name: "sights.dusseldorf.altstadt", description: "sights.dusseldorf.altstadt_desc" }
       ],
       [
-        { image: images["konig"], name: "Königsallee", description: "Die Königsallee ist eine luxuriöse Einkaufsstraße mit exklusiven Boutiquen." },
-        { image: images["konig2"]},
-        { image: images["konig1"] }
+        { image: images["konig"], name: "sights.dusseldorf.konigsallee", description: "sights.dusseldorf.konigsallee_desc" },
+        { image: images["konig2"], name: "sights.dusseldorf.konigsallee", description: "sights.dusseldorf.konigsallee_desc" },
+        { image: images["konig1"], name: "sights.dusseldorf.konigsallee", description: "sights.dusseldorf.konigsallee_desc" }
       ],
       [
-        { image: images["schlossturm1"], name: "Schlossturm", description: "Der Schlossturm ist das letzte Überbleibsel des ehemaligen Düsseldorfer Schlosses." },
-        { image: images["schlossturm2"]  }
+        { image: images["schlossturm1"], name: "sights.dusseldorf.schlossturm", description: "sights.dusseldorf.schlossturm_desc" },
+        { image: images["schlossturm2"], name: "sights.dusseldorf.schlossturm", description: "sights.dusseldorf.schlossturm_desc" }
       ],
     ]
   },
@@ -192,21 +191,21 @@ export const citiesData = {
     background: getCityImage('Dresden'),
     carousels: [
       [
-        { image: images["fk1"], name: "Frauenkirche", description: "Die Frauenkirche ist eine barocke Kirche und ein Wahrzeichen Dresdens." },
-        { image: images["fk2"] },
-        { image: images["fk3"] }
+        { image: images["fk1"], name: "sights.dresden.frauenkirche", description: "sights.dresden.frauenkirche_desc" },
+        { image: images["fk2"], name: "sights.dresden.frauenkirche", description: "sights.dresden.frauenkirche_desc" },
+        { image: images["fk3"], name: "sights.dresden.frauenkirche", description: "sights.dresden.frauenkirche_desc" }
       ],
       [
-        { image: images["semper1"], name: "Semperoper", description: "Die Semperoper ist eines der bekanntesten Opernhäuser Deutschlands." },
-        { image: images["semper2"] }
+        { image: images["semper1"], name: "sights.dresden.semperoper", description: "sights.dresden.semperoper_desc" },
+        { image: images["semper2"], name: "sights.dresden.semperoper", description: "sights.dresden.semperoper_desc" }
       ],
       [
-        { image: images["zwinger1"], name: "Zwinger", description: "Der Zwinger ist ein barockes Schloss mit Museen und einem schönen Innenhof." },
-        { image: images["zwinger2"] }
+        { image: images["zwinger1"], name: "sights.dresden.zwinger", description: "sights.dresden.zwinger_desc" },
+        { image: images["zwinger2"], name: "sights.dresden.zwinger", description: "sights.dresden.zwinger_desc" }
       ],
       [
-        { image: images["rschloss1"], name: "Residenzschloss", description: "Das Residenzschloss beherbergt mehrere Museen, darunter das Historische Grüne Gewölbe." },
-        { image: images["rschloss2"] }
+        { image: images["rschloss1"], name: "sights.dresden.residenzschloss", description: "sights.dresden.residenzschloss_desc" },
+        { image: images["rschloss2"], name: "sights.dresden.residenzschloss", description: "sights.dresden.residenzschloss_desc" }
       ],
     ]
   },
@@ -214,19 +213,19 @@ export const citiesData = {
     background: getCityImage('Leipzig'),
     carousels: [
       [
-        { image: images["niko1"], name: "Nikolaikirche", description: "Die Nikolaikirche spielte eine zentrale Rolle in der friedlichen Revolution von 1989." },
-        { image: images["niko2"] }
+        { image: images["niko1"], name: "sights.leipzig.nikolaikirche", description: "sights.leipzig.nikolaikirche_desc" },
+        { image: images["niko2"], name: "sights.leipzig.nikolaikirche", description: "sights.leipzig.nikolaikirche_desc" }
       ],
       [
-        { image: images["volk1"], name: "Völkerschlachtdenkmal", description: "Das Völkerschlachtdenkmal erinnert an die Schlacht von Leipzig 1813." },
-        { image: images["volk2"] }
+        { image: images["volk1"], name: "sights.leipzig.volkerschlachtdenkmal", description: "sights.leipzig.volkerschlachtdenkmal_desc" },
+        { image: images["volk2"], name: "sights.leipzig.volkerschlachtdenkmal", description: "sights.leipzig.volkerschlachtdenkmal_desc" }
       ],
       [
-        { image: images["gwh1"], name: "Gewandhaus", description: "Das Gewandhaus ist ein weltberühmtes Konzerthaus mit herausragender Akustik." },
-        { image: images["gwh2"]}
+        { image: images["gwh1"], name: "sights.leipzig.gewandhaus", description: "sights.leipzig.gewandhaus_desc" },
+        { image: images["gwh2"], name: "sights.leipzig.gewandhaus", description: "sights.leipzig.gewandhaus_desc" }
       ],
       [
-        { image: images["zlp1"], name: "Zoo Leipzig", description: "Der Zoo Leipzig ist bekannt für seine modernen Anlagen wie die Gondwanaland-Halle." }
+        { image: images["zlp1"], name: "sights.leipzig.zoo_leipzig", description: "sights.leipzig.zoo_leipzig_desc" }
       ],
     ]
   },
@@ -234,20 +233,19 @@ export const citiesData = {
     background: getCityImage('Hannover'),
     carousels: [
       [
-        { image: images["hanrt1"], name: "Neues Rathaus", description: "Das Neue Rathaus ist ein imposantes Gebäude mit einer Aussichtskuppel." },
-        { image: images["hanrt2"] }
+        { image: images["hanrt1"], name: "sights.hannover.neues_rathaus", description: "sights.hannover.neues_rathaus_desc" },
+        { image: images["hanrt2"], name: "sights.hannover.neues_rathaus", description: "sights.hannover.neues_rathaus_desc" }
       ],
       [
-        { image: images["hga1"], name: "Herrenhäuser Gärten", description: "Die Herrenhäuser Gärten sind ein barockes Gartenensemble von internationalem Rang." },
-        { image: images["hga2"]}
+        { image: images["hga1"], name: "sights.hannover.herrenhauser_garten", description: "sights.hannover.herrenhauser_garten_desc" },
+        { image: images["hga2"], name: "sights.hannover.herrenhauser_garten", description: "sights.hannover.herrenhauser_garten_desc" }
       ],
       [
-        { image: images["masch1"], name: "Maschsee", description: "Der Maschsee ist ein beliebter See für Freizeitaktivitäten und Spaziergänge." },
-        { image: images["masch2"] }
+        { image: images["masch1"], name: "sights.hannover.maschsee", description: "sights.hannover.maschsee_desc" },
+        { image: images["masch2"], name: "sights.hannover.maschsee", description: "sights.hannover.maschsee_desc" }
       ],
       [
-        { image: images["sprengel"], name: "Sprengel Museum", description: "Das Sprengel Museum zeigt moderne Kunst von Künstlern wie Picasso und Klee." }
-
+        { image: images["sprengel"], name: "sights.hannover.sprengel_museum", description: "sights.hannover.sprengel_museum_desc" }
       ],
     ]
   },
@@ -255,20 +253,20 @@ export const citiesData = {
     background: getCityImage('Nuremberg'),
     carousels: [
       [
-        { image: images["kais1"], name: "Kaiserburg", description: "Die Kaiserburg ist eine mittelalterliche Burg und ein Wahrzeichen Nürnbergs." },
-        { image: images["kais2"] }
+        { image: images["kais1"], name: "sights.nuremberg.kaiserburg", description: "sights.nuremberg.kaiserburg_desc" },
+        { image: images["kais2"], name: "sights.nuremberg.kaiserburg", description: "sights.nuremberg.kaiserburg_desc" }
       ],
       [
-        { image: images["haum1"], name: "Hauptmarkt", description: "Der Hauptmarkt ist bekannt für den Schönen Brunnen und den Christkindlesmarkt." },
-        { image: images["haum2"] }
+        { image: images["haum1"], name: "sights.nuremberg.hauptmarkt", description: "sights.nuremberg.hauptmarkt_desc" },
+        { image: images["haum2"], name: "sights.nuremberg.hauptmarkt", description: "sights.nuremberg.hauptmarkt_desc" }
       ],
       [
-        { image: images["docu1"], name: "Dokumentationszentrum", description: "Das Dokumentationszentrum informiert über die Geschichte des Nationalsozialismus." },
-        { image: images["docu2"] }
+        { image: images["docu1"], name: "sights.nuremberg.dokumentationszentrum", description: "sights.nuremberg.dokumentationszentrum_desc" },
+        { image: images["docu2"], name: "sights.nuremberg.dokumentationszentrum", description: "sights.nuremberg.dokumentationszentrum_desc" }
       ],
       [
-        { image: images["lorenz1"], name: "St. Lorenz Kirche", description: "Die St. Lorenz Kirche ist eine gotische Kirche mit beeindruckender Architektur." },
-        { image: images["lorenz2"] }
+        { image: images["lorenz1"], name: "sights.nuremberg.st_lorenz_kirche", description: "sights.nuremberg.st_lorenz_kirche_desc" },
+        { image: images["lorenz2"], name: "sights.nuremberg.st_lorenz_kirche", description: "sights.nuremberg.st_lorenz_kirche_desc" }
       ],
     ]
   },
@@ -276,20 +274,20 @@ export const citiesData = {
     background: getCityImage('Bremen'),
     carousels: [
       [
-        { image: images["musik1"], name: "Bremer Stadtmusikanten", description: "Die Bremer Stadtmusikanten sind eine berühmte Bronzeskulptur nach dem Märchen." },
-        { image: images["musik2"]  }
+        { image: images["musik1"], name: "sights.bremen.bremer_stadtmusikanten", description: "sights.bremen.bremer_stadtmusikanten_desc" },
+        { image: images["musik2"], name: "sights.bremen.bremer_stadtmusikanten", description: "sights.bremen.bremer_stadtmusikanten_desc" }
       ],
       [
-        { image: images["bremrt1"], name: "Rathaus", description: "Das Bremer Rathaus ist ein UNESCO-Welterbe mit einer prächtigen Fassade." },
-        { image: images["bremrt2"] }
+        { image: images["bremrt1"], name: "sights.bremen.rathaus", description: "sights.bremen.rathaus_desc" },
+        { image: images["bremrt2"], name: "sights.bremen.rathaus", description: "sights.bremen.rathaus_desc" }
       ],
       [
-        { image: images["viert1"], name: "Schnoorviertel", description: "Das Schnoorviertel ist ein malerisches Viertel mit engen Gassen und alten Häusern." },
-        { image: images["viert2"] }
+        { image: images["viert1"], name: "sights.bremen.schnoorviertel", description: "sights.bremen.schnoorviertel_desc" },
+        { image: images["viert2"], name: "sights.bremen.schnoorviertel", description: "sights.bremen.schnoorviertel_desc" }
       ],
       [
-        { image: images["sta1"], name: "Rolandstatue", description: "Die Rolandstatue ist ein Symbol für die Freiheit und Unabhängigkeit Bremens." },
-        { image: images["sta2"]}
+        { image: images["sta1"], name: "sights.bremen.rolandstatue", description: "sights.bremen.rolandstatue_desc" },
+        { image: images["sta2"], name: "sights.bremen.rolandstatue", description: "sights.bremen.rolandstatue_desc" }
       ],
     ]
   },
@@ -297,20 +295,20 @@ export const citiesData = {
     background: getCityImage('Dortmund'),
     carousels: [
       [
-        { image: images["dortp1"], name: "Westfalenpark", description: "Der Westfalenpark ist ein großer Stadtpark mit dem Florianturm." },
-        { image: images["dortp2"] }
+        { image: images["dortp1"], name: "sights.dortmund.westfalenpark", description: "sights.dortmund.westfalenpark_desc" },
+        { image: images["dortp2"], name: "sights.dortmund.westfalenpark", description: "sights.dortmund.westfalenpark_desc" }
       ],
       [
-        { image: images["fuss1"], name: "Deutsches Fußballmuseum", description: "Das Deutsche Fußballmuseum widmet sich der Geschichte des deutschen Fußballs." },
-        { image: images["fuss2"] }
+        { image: images["fuss1"], name: "sights.dortmund.deutsches_fussballmuseum", description: "sights.dortmund.deutsches_fussballmuseum_desc" },
+        { image: images["fuss2"], name: "sights.dortmund.deutsches_fussballmuseum", description: "sights.dortmund.deutsches_fussballmuseum_desc" }
       ],
       [
-        { image: images["uturm1"], name: "U-Turm", description: "Der U-Turm ist ein Kulturzentrum in einem ehemaligen Brauereiturm." },
-        { image: images["uturm2"] }
+        { image: images["uturm1"], name: "sights.dortmund.u_turm", description: "sights.dortmund.u_turm_desc" },
+        { image: images["uturm2"], name: "sights.dortmund.u_turm", description: "sights.dortmund.u_turm_desc" }
       ],
       [
-        { image: images["reino1"], name: "Reinoldikirche", description: "Die Reinoldikirche ist die älteste Kirche Dortmunds und ein Wahrzeichen." },
-        { image: images["reino2"]}
+        { image: images["reino1"], name: "sights.dortmund.reinoldikirche", description: "sights.dortmund.reinoldikirche_desc" },
+        { image: images["reino2"], name: "sights.dortmund.reinoldikirche", description: "sights.dortmund.reinoldikirche_desc" }
       ],
     ]
   },
@@ -318,20 +316,19 @@ export const citiesData = {
     background: getCityImage('Essen'),
     carousels: [
       [
-        { image: images["zoll1"], name: "Zeche Zollverein", description: "Die Zeche Zollverein ist ein UNESCO-Welterbe und ein Symbol für den Strukturwandel." },
-        { image: images["zoll2"] }
+        { image: images["zoll1"], name: "sights.essen.zeche_zollverein", description: "sights.essen.zeche_zollverein_desc" },
+        { image: images["zoll2"], name: "sights.essen.zeche_zollverein", description: "sights.essen.zeche_zollverein_desc" }
       ],
       [
-        { image: images["essp1"], name: "Grugapark", description: "Der Grugapark ist ein großer Park mit botanischen Gärten und Freizeitangeboten." },
-        { image: images["essp2"] }
+        { image: images["essp1"], name: "sights.essen.grugapark", description: "sights.essen.grugapark_desc" },
+        { image: images["essp2"], name: "sights.essen.grugapark", description: "sights.essen.grugapark_desc" }
       ],
       [
-        { image: images["essk1"], name: "Museum Folkwang", description: "Das Museum Folkwang zeigt eine bedeutende Sammlung moderner Kunst." },
-        { image: images["essk2"] }
+        { image: images["essk1"], name: "sights.essen.museum_folkwang", description: "sights.essen.museum_folkwang_desc" },
+        { image: images["essk2"], name: "sights.essen.museum_folkwang", description: "sights.essen.museum_folkwang_desc" }
       ],
       [
-        { image: images["stif"], name: "Alfried Krupp von Bohlen und Halbach-Stiftung", description: "Die Stiftung fördert Kunst und Kultur in Essen." }
-
+        { image: images["stif"], name: "sights.essen.alfried_krupp_stiftung", description: "sights.essen.alfried_krupp_stiftung_desc" }
       ],
     ]
   },
@@ -339,20 +336,20 @@ export const citiesData = {
     background: getCityImage('Bonn'),
     carousels: [
       [
-        { image: images["beth1"], name: "Beethoven-Haus", description: "Das Beethoven-Haus ist das Geburtshaus des Komponisten Ludwig van Beethoven." },
-        { image: images["beth2"] }
+        { image: images["beth1"], name: "sights.bonn.beethoven_haus", description: "sights.bonn.beethoven_haus_desc" },
+        { image: images["beth2"], name: "sights.bonn.beethoven_haus", description: "sights.bonn.beethoven_haus_desc" }
       ],
       [
-        { image: images["zol1"], name: "Alter Zoll", description: "Der Alte Zoll ist eine historische Festung mit Blick auf den Rhein." },
-        { image: images["zol2"] }
+        { image: images["zol1"], name: "sights.bonn.alter_zoll", description: "sights.bonn.alter_zoll_desc" },
+        { image: images["zol2"], name: "sights.bonn.alter_zoll", description: "sights.bonn.alter_zoll_desc" }
       ],
       [
-        { image: images["bonnp1"], name: "Botanischer Garten", description: "Der Botanische Garten Bonn zeigt eine Vielzahl exotischer Pflanzen." },
-        { image: images["bonnp2"] }
+        { image: images["bonnp1"], name: "sights.bonn.botanischer_garten", description: "sights.bonn.botanischer_garten_desc" },
+        { image: images["bonnp2"], name: "sights.bonn.botanischer_garten", description: "sights.bonn.botanischer_garten_desc" }
       ],
       [
-        { image: images["brt1"], name: "Rathaus", description:  "rathauss" },
-        { image: images["brt2"] }
+        { image: images["brt1"], name: "sights.bonn.rathaus", description: "sights.bonn.rathaus_desc" },
+        { image: images["brt2"], name: "sights.bonn.rathaus", description: "sights.bonn.rathaus_desc" }
       ],
     ]
   },
@@ -360,20 +357,20 @@ export const citiesData = {
     background: getCityImage('Mannheim'),
     carousels: [
       [
-        { image: images["wasst1"], name: "Wasserturm", description: "Der Wasserturm ist das bekannteste Wahrzeichen Mannheims." },
-        { image: images["wasst2"] }
+        { image: images["wasst1"], name: "sights.mannheim.wasserturm", description: "sights.mannheim.wasserturm_desc" },
+        { image: images["wasst2"], name: "sights.mannheim.wasserturm", description: "sights.mannheim.wasserturm_desc" }
       ],
       [
-        { image: images["manns1"], name: "Schloss Mannheim", description: "Das Schloss Mannheim ist eine barocke Residenz und Sitz der Universität." },
-        { image: images["manns2"] }
+        { image: images["manns1"], name: "sights.mannheim.schloss_mannheim", description: "sights.mannheim.schloss_mannheim_desc" },
+        { image: images["manns2"], name: "sights.mannheim.schloss_mannheim", description: "sights.mannheim.schloss_mannheim_desc" }
       ],
       [
-        { image: images["mannp1"], name: "Luisenpark", description: "Der Luisenpark ist ein großer Park mit Seen und botanischen Gärten." },
-        { image: images["mannp2"]}
+        { image: images["mannp1"], name: "sights.mannheim.luisenpark", description: "sights.mannheim.luisenpark_desc" },
+        { image: images["mannp2"], name: "sights.mannheim.luisenpark", description: "sights.mannheim.luisenpark_desc" }
       ],
       [
-        { image: images["mannk1"], name: "Jesuitenkirche", description: "Die Jesuitenkirche ist eine barocke Kirche mit beeindruckender Innenausstattung." },
-        { image: images["mannk2"] }
+        { image: images["mannk1"], name: "sights.mannheim.jesuitenkirche", description: "sights.mannheim.jesuitenkirche_desc" },
+        { image: images["mannk2"], name: "sights.mannheim.jesuitenkirche", description: "sights.mannheim.jesuitenkirche_desc" }
       ],
     ]
   },
@@ -381,18 +378,18 @@ export const citiesData = {
     background: getCityImage('Karlsruhe'),
     carousels: [
       [
-        { image: images["schkarl1"], name: "Schloss Karlsruhe", description: "Das Schloss Karlsruhe ist das Wahrzeichen der Stadt und Sitz des Bundesgerichtshofs." },
-        { image: images["schkarl2"] }
+        { image: images["schkarl1"], name: "sights.karlsruhe.schloss_karlsruhe", description: "sights.karlsruhe.schloss_karlsruhe_desc" },
+        { image: images["schkarl2"], name: "sights.karlsruhe.schloss_karlsruhe", description: "sights.karlsruhe.schloss_karlsruhe_desc" }
       ],
       [
-        { image: images["zkm1"], name: "ZKM", description: "Das Zentrum für Kunst und Medien zeigt zeitgenössische Kunst und Medienkunst." },
-        { image: images["zkm2"] }
+        { image: images["zkm1"], name: "sights.karlsruhe.zkm", description: "sights.karlsruhe.zkm_desc" },
+        { image: images["zkm2"], name: "sights.karlsruhe.zkm", description: "sights.karlsruhe.zkm_desc" }
       ],
       [
-        { image: images["anlage1"], name: "Günther-Klotz-Anlage", description: "Der See in der Günther-Klotz-Anlage." }
+        { image: images["anlage1"], name: "sights.karlsruhe.gunther_klotz_anlage", description: "sights.karlsruhe.gunther_klotz_anlage_desc" }
       ],
       [
-        { image: images["knsthalle1"], name: "Kunsthalle", description: "Eine Galeriehalle in der Staatlichen Kunsthalle." }
+        { image: images["knsthalle1"], name: "sights.karlsruhe.kunsthalle", description: "sights.karlsruhe.kunsthalle_desc" }
       ],
     ]
   },
@@ -400,20 +397,19 @@ export const citiesData = {
     background: getCityImage('Freiburg'),
     carousels: [
       [
-        { image: images["frmun1"], name: "Freiburger Münster", description: "Das Freiburger Münster ist eine gotische Kathedrale und Wahrzeichen der Stadt." },
-        { image: images["frmun2"] }
+        { image: images["frmun1"], name: "sights.freiburg.freiburger_munster", description: "sights.freiburg.freiburger_munster_desc" },
+        { image: images["frmun2"], name: "sights.freiburg.freiburger_munster", description: "sights.freiburg.freiburger_munster_desc" }
       ],
       [
-        { image: images["freiturm1"], name: "Schwabentor", description: "Das Schwabentor ist eines der erhaltenen Stadttore Freiburgs." },
-        { image: images["freiturm2"] }
+        { image: images["freiturm1"], name: "sights.freiburg.schwabentor", description: "sights.freiburg.schwabentor_desc" },
+        { image: images["freiturm2"], name: "sights.freiburg.schwabentor", description: "sights.freiburg.schwabentor_desc" }
       ],
       [
-        { image: images["frmus1"], name: "Augustiner Museum", description: "Das Augustiner Museum zeigt Kunst und Geschichte der Region." }
-
+        { image: images["frmus1"], name: "sights.freiburg.augustiner_museum", description: "sights.freiburg.augustiner_museum_desc" }
       ],
       [
-        { image: images["bachl1"], name: "Bächle", description: "Die Freiburger Bächle sind kleine Wasserläufe, die durch die Altstadt fließen." },
-        { image: images["bachl2"]}
+        { image: images["bachl1"], name: "sights.freiburg.bachle", description: "sights.freiburg.bachle_desc" },
+        { image: images["bachl2"], name: "sights.freiburg.bachle", description: "sights.freiburg.bachle_desc" }
       ],
     ]
   },
@@ -421,20 +417,20 @@ export const citiesData = {
     background: getCityImage('Kiel'),
     carousels: [
       [
-        { image: images["forde1"], name: "Kieler Förde", description: "Die Kieler Förde ist eine malerische Bucht und ein Zentrum für Segelveranstaltungen." },
-        { image: images["forde2"]}
+        { image: images["forde1"], name: "sights.kiel.kieler_forde", description: "sights.kiel.kieler_forde_desc" },
+        { image: images["forde2"], name: "sights.kiel.kieler_forde", description: "sights.kiel.kieler_forde_desc" }
       ],
       [
-        { image: images["rathkiel1"], name: "Rathaus Kiel", description: "Das Rathaus Kiel ist bekannt für seinen markanten Turm." },
-        { image: images["rathkiel2"]},
-        { image: images["rathkiel3"] }
+        { image: images["rathkiel1"], name: "sights.kiel.rathaus_kiel", description: "sights.kiel.rathaus_kiel_desc" },
+        { image: images["rathkiel2"], name: "sights.kiel.rathaus_kiel", description: "sights.kiel.rathaus_kiel_desc" },
+        { image: images["rathkiel3"], name: "sights.kiel.rathaus_kiel", description: "sights.kiel.rathaus_kiel_desc" }
       ],
       [
-        { image: images["schiffm1"], name: "Schifffahrtsmuseum", description: "Das Schifffahrtsmuseum zeigt die maritime Geschichte Kiels." },
-        { image: images["schiffm2"] }
+        { image: images["schiffm1"], name: "sights.kiel.schifffahrtsmuseum", description: "sights.kiel.schifffahrtsmuseum_desc" },
+        { image: images["schiffm2"], name: "sights.kiel.schifffahrtsmuseum", description: "sights.kiel.schifffahrtsmuseum_desc" }
       ],
       [
-          { image: images["schleuse"], name: "Holtenauer Schleuse", description: "Schiffe passieren die Holtenauer Schleuse." }
+        { image: images["schleuse"], name: "sights.kiel.holtenauer_schleuse", description: "sights.kiel.holtenauer_schleuse_desc" }
       ],
     ]
   },
@@ -442,19 +438,19 @@ export const citiesData = {
     background: getCityImage('Rostock'),
     carousels: [
       [
-        { image: images["rostf1"], name: "Warnemünder Leuchtturm", description: "Der Warnemünder Leuchtturm ist ein Wahrzeichen Rostocks." },
-        { image: images["rostf2"] }
+        { image: images["rostf1"], name: "sights.rostock.warnemunder_leuchtturm", description: "sights.rostock.warnemunder_leuchtturm_desc" },
+        { image: images["rostf2"], name: "sights.rostock.warnemunder_leuchtturm", description: "sights.rostock.warnemunder_leuchtturm_desc" }
       ],
       [
-        { image: images["rostrt1"], name: "Rostocker Rathaus", description: "Das Rostocker Rathaus ist ein historisches Gebäude mit barocker Fassade." },
-        { image: images["rostrt2"] }
+        { image: images["rostrt1"], name: "sights.rostock.rostocker_rathaus", description: "sights.rostock.rostocker_rathaus_desc" },
+        { image: images["rostrt2"], name: "sights.rostock.rostocker_rathaus", description: "sights.rostock.rostocker_rathaus_desc" }
       ],
       [
-        { image: images["rostsr1"], name: "Kröpeliner Straße", description: "Die Kröpeliner Straße ist die Haupteinkaufsstraße Rostocks." },
-        { image: images["rostsr2"]}
+        { image: images["rostsr1"], name: "sights.rostock.kropeliner_strasse", description: "sights.rostock.kropeliner_strasse_desc" },
+        { image: images["rostsr2"], name: "sights.rostock.kropeliner_strasse", description: "sights.rostock.kropeliner_strasse_desc" }
       ],
       [
-        { image: images["rostk"], name: "St. Marien", description: "Die astronomische Uhr in der St. Marien Kirche." }
+        { image: images["rostk"], name: "sights.rostock.st_marien", description: "sights.rostock.st_marien_desc" }
       ],
     ]
   },
@@ -462,20 +458,20 @@ export const citiesData = {
     background: getCityImage('Mainz'),
     carousels: [
       [
-        { image: images["mart1"], name: "Mainzer Dom", description: "Der Mainzer Dom ist eine romanische Kathedrale und Wahrzeichen der Stadt." },
-        { image: images["mart2"]}
+        { image: images["mart1"], name: "sights.mainz.mainzer_dom", description: "sights.mainz.mainzer_dom_desc" },
+        { image: images["mart2"], name: "sights.mainz.mainzer_dom", description: "sights.mainz.mainzer_dom_desc" }
       ],
       [
-        { image: images["mamus1"], name: "Gutenberg-Museum", description: "Das Gutenberg-Museum widmet sich der Geschichte des Buchdrucks." },
-        { image: images["mamus2"] }
+        { image: images["mamus1"], name: "sights.mainz.gutenberg_museum", description: "sights.mainz.gutenberg_museum_desc" },
+        { image: images["mamus2"], name: "sights.mainz.gutenberg_museum", description: "sights.mainz.gutenberg_museum_desc" }
       ],
       [
-        { image: images["rhpro1"], name: "Rheinpromenade", description: "Die Rheinpromenade bietet schöne Ausblicke auf den Rhein." },
-        { image: images["rhpro2"]}
+        { image: images["rhpro1"], name: "sights.mainz.rheinpromenade", description: "sights.mainz.rheinpromenade_desc" },
+        { image: images["rhpro2"], name: "sights.mainz.rheinpromenade", description: "sights.mainz.rheinpromenade_desc" }
       ],
       [
-        { image: images["mainzt1"], name: "Theater Mainz", description: "Das Staatstheater Mainz ist ein bedeutendes Kulturzentrum." },
-        { image: images["mainzt2"] }
+        { image: images["mainzt1"], name: "sights.mainz.theater_mainz", description: "sights.mainz.theater_mainz_desc" },
+        { image: images["mainzt2"], name: "sights.mainz.theater_mainz", description: "sights.mainz.theater_mainz_desc" }
       ],
     ]
   },
@@ -483,19 +479,18 @@ export const citiesData = {
     background: getCityImage('Saarbrücken'),
     carousels: [
       [
-        { image: images["saarsch1"], name: "Saarbrücker Schloss", description: "Das Saarbrücker Schloss ist eine barocke Residenz mit moderner Architektur." },
-        { image: images["saarsch2"] }
+        { image: images["saarsch1"], name: "sights.saarbrucken.saarbrucker_schloss", description: "sights.saarbrucken.saarbrucker_schloss_desc" },
+        { image: images["saarsch2"], name: "sights.saarbrucken.saarbrucker_schloss", description: "sights.saarbrucken.saarbrucker_schloss_desc" }
       ],
       [
-        { image: images["saark1"], name: "Ludwigskirche", description: "Die Ludwigskirche ist eine barocke Kirche und ein Wahrzeichen Saarbrückens." }
-
+        { image: images["saark1"], name: "sights.saarbrucken.ludwigskirche", description: "sights.saarbrucken.ludwigskirche_desc" }
       ],
       [
-        { image: images["saar1"], name: "Saar", description: "Die Saar ist ein malerischer Fluss, der durch die Stadt fließt." },
-        { image: images["saar2"] }
+        { image: images["saar1"], name: "sights.saarbrucken.saar", description: "sights.saarbrucken.saar_desc" },
+        { image: images["saar2"], name: "sights.saarbrucken.saar", description: "sights.saarbrucken.saar_desc" }
       ],
       [
-        { image: images["dfga1"], name: "Deutsch-Französischer Garten", description: "Der Deutsch-Französische Garten ist ein großer Park für Freizeitaktivitäten." }
+        { image: images["dfga1"], name: "sights.saarbrucken.deutsch_franzosischer_garten", description: "sights.saarbrucken.deutsch_franzosischer_garten_desc" }
       ],
     ]
   },
@@ -503,19 +498,19 @@ export const citiesData = {
     background: getCityImage('Augsburg'),
     carousels: [
       [
-        { image: images["augd1"], name: "Augsburger Dom", description: "Der Augsburger Dom ist eine romanisch-gotische Kathedrale." },
-        { image: images["augd2"] }
+        { image: images["augd1"], name: "sights.augsburg.augsburger_dom", description: "sights.augsburg.augsburger_dom_desc" },
+        { image: images["augd2"], name: "sights.augsburg.augsburger_dom", description: "sights.augsburg.augsburger_dom_desc" }
       ],
       [
-        { image: images["fugg1"], name: "Fuggerei", description: "Die Fuggerei ist die älteste Sozialsiedlung der Welt." },
-        { image: images["fugg2"] }
+        { image: images["fugg1"], name: "sights.augsburg.fuggerei", description: "sights.augsburg.fuggerei_desc" },
+        { image: images["fugg2"], name: "sights.augsburg.fuggerei", description: "sights.augsburg.fuggerei_desc" }
       ],
       [
-        { image: images["rtaug1"], name: "Rathaus Augsburg", description: "Das Rathaus Augsburg ist bekannt für seinen Goldenen Saal." },
-        { image: images["rtaug2"] }
+        { image: images["rtaug1"], name: "sights.augsburg.rathaus_augsburg", description: "sights.augsburg.rathaus_augsburg_desc" },
+        { image: images["rtaug2"], name: "sights.augsburg.rathaus_augsburg", description: "sights.augsburg.rathaus_augsburg_desc" }
       ],
       [
-        { image: images["augt1"], name: "Perlachturm", description: "Die Aussicht vom Perlachturm." }
+        { image: images["augt1"], name: "sights.augsburg.perlachturm", description: "sights.augsburg.perlachturm_desc" }
       ],
     ]
   },
@@ -523,20 +518,20 @@ export const citiesData = {
     background: getCityImage('Wiesbaden'),
     carousels: [
       [
-        { image: images["wiesh1"], name: "Kurhaus Wiesbaden", description: "Das Kurhaus Wiesbaden ist ein prächtiges Gebäude mit einem Casino." },
-        { image: images["wiesh2"] }
+        { image: images["wiesh1"], name: "sights.wiesbaden.kurhaus_wiesbaden", description: "sights.wiesbaden.kurhaus_wiesbaden_desc" },
+        { image: images["wiesh2"], name: "sights.wiesbaden.kurhaus_wiesbaden", description: "sights.wiesbaden.kurhaus_wiesbaden_desc" }
       ],
       [
-        { image: images["nero1"], name: "Neroberg", description: "Der Neroberg bietet eine Aussicht auf Wiesbaden und einen historischen Tempel." },
-        { image: images["nero2"] }
+        { image: images["nero1"], name: "sights.wiesbaden.neroberg", description: "sights.wiesbaden.neroberg_desc" },
+        { image: images["nero2"], name: "sights.wiesbaden.neroberg", description: "sights.wiesbaden.neroberg_desc" }
       ],
       [
-        { image: images["wiesk1"], name: "Marktkirche", description: "Die Marktkirche ist eine neugotische Kirche und Wahrzeichen Wiesbadens." },
-        { image: images["wiesk2"] }
+        { image: images["wiesk1"], name: "sights.wiesbaden.marktkirche", description: "sights.wiesbaden.marktkirche_desc" },
+        { image: images["wiesk2"], name: "sights.wiesbaden.marktkirche", description: "sights.wiesbaden.marktkirche_desc" }
       ],
       [
-        { image: images["weinb1"], name: "Rheingau", description: "Die Region Rheingau ist bekannt für ihre Weinberge und Schlösser." },
-        { image: images["weinb2"] }
+        { image: images["weinb1"], name: "sights.wiesbaden.rheingau", description: "sights.wiesbaden.rheingau_desc" },
+        { image: images["weinb2"], name: "sights.wiesbaden.rheingau", description: "sights.wiesbaden.rheingau_desc" }
       ],
     ]
   },
@@ -544,20 +539,19 @@ export const citiesData = {
     background: getCityImage('Erfurt'),
     carousels: [
       [
-        { image: images["erfdom1"], name: "Erfurter Dom", description: "Der Erfurter Dom ist eine gotische Kathedrale auf dem Domberg." },
-        { image: images["erfdom2"] }
+        { image: images["erfdom1"], name: "sights.erfurt.erfurter_dom", description: "sights.erfurt.erfurter_dom_desc" },
+        { image: images["erfdom2"], name: "sights.erfurt.erfurter_dom", description: "sights.erfurt.erfurter_dom_desc" }
       ],
       [
-        { image: images["krame1"], name: "Krämerbrücke", description: "Die Krämerbrücke ist eine bebaute Brücke mit Fachwerkhäusern." },
-        { image: images["krame2"] }
+        { image: images["krame1"], name: "sights.erfurt.kramerbrucke", description: "sights.erfurt.kramerbrucke_desc" },
+        { image: images["krame2"], name: "sights.erfurt.kramerbrucke", description: "sights.erfurt.kramerbrucke_desc" }
       ],
       [
-        { image: images["peter1"], name: "Zitadelle Petersberg", description: "Die Zitadelle Petersberg ist eine historische Festung mit Aussicht." },
-        { image: images["peter2"] }
+        { image: images["peter1"], name: "sights.erfurt.zitadelle_petersberg", description: "sights.erfurt.zitadelle_petersberg_desc" },
+        { image: images["peter2"], name: "sights.erfurt.zitadelle_petersberg", description: "sights.erfurt.zitadelle_petersberg_desc" }
       ],
       [
-        { image: images["egapark"], name: "Egapark", description: "Der Egapark ist ein großer Park mit Blumenbeeten und Ausstellungen." }
-
+        { image: images["egapark"], name: "sights.erfurt.egapark", description: "sights.erfurt.egapark_desc" }
       ],
     ]
   },
@@ -565,20 +559,16 @@ export const citiesData = {
     background: getCityImage('Default'),
     carousels: [
       [
-        { image: images["default"], name: "Sehenswürdigkeit 1", description: "Eine typische Sehenswürdigkeit in der Stadt." },
-
+        { image: images["default"], name: "sights.default.sight_1", description: "sights.default.sight_1_desc" },
       ],
       [
-        { image: images["default"], name: "Sehenswürdigkeit 2", description: "Ein bekanntes Wahrzeichen der Stadt." },
-
+        { image: images["default"], name: "sights.default.sight_2", description: "sights.default.sight_2_desc" },
       ],
       [
-        { image: images["default"], name: "Sehenswürdigkeit 3", description: "Ein beliebter Ort für Touristen." },
-
+        { image: images["default"], name: "sights.default.sight_3", description: "sights.default.sight_3_desc" },
       ],
       [
-        { image: images["default"], name: "Sehenswürdigkeit 4", description: "Ein historischer Ort mit viel Charme." },
-
+        { image: images["default"], name: "sights.default.sight_4", description: "sights.default.sight_4_desc" },
       ],
     ]
   },

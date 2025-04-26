@@ -1,99 +1,44 @@
+```vue
+<!-- Template ve Script kısımları değişmedi, önceki versiyonla aynı -->
 <template>
   <div class="city-page">
-    <!-- Şehir başlığı -->
-    <h1 class="city-title">{{ cityName }}</h1>
-
-    <!-- Gizle/Göster Butonu (Her zaman sağ üstte) -->
+    <h1 v-if="showCarousels" class="city-title">{{ cityName }}</h1>
     <button class="toggle-button" @click="toggleCarousels">
       {{ showCarousels ? $t('city.hide') : $t('city.show') }}
     </button>
 
-    <!-- Carousellerin görünürlüğünü kontrol eden yapı -->
     <div v-if="showCarousels" class="carousel-grid">
-      <!-- Sağ Üst Carousel -->
-      <div class="carousel-container top-right">
+      <div
+        v-for="(carousel, index) in cityData.carousels"
+        :key="index"
+        :class="carouselPosition(index)"
+      >
         <div class="carousel">
-          <button class="carousel-button prev" @click="prevSlide(0)">
-            <
-          </button>
-          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[0] * 100}%)` }">
-            <div v-for="(slide, index) in cityData.carousels[0]" :key="index" class="carousel-slide">
-              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-              <p class="carousel-name">{{ slide.name }}</p>
+          <button class="carousel-button prev" @click="prevSlide(index)"><</button>
+          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[index] * 100}%)` }">
+            <div
+              v-for="(slide, slideIndex) in carousel"
+              :key="slideIndex"
+              class="carousel-slide"
+            >
+              <img :src="slide.image" :alt="$t(slide.name)" class="carousel-image" @click="openModal(slide)" />
+              <p class="carousel-name">{{ $t(slide.name) }}</p>
             </div>
           </div>
-          <button class="carousel-button next" @click="nextSlide(0)">
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Sol Üst Carousel -->
-      <div class="carousel-container top-left">
-        <div class="carousel">
-          <button class="carousel-button prev" @click="prevSlide(1)">
-            <
-          </button>
-          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[1] * 100}%)` }">
-            <div v-for="(slide, index) in cityData.carousels[1]" :key="index" class="carousel-slide">
-              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-              <p class="carousel-name">{{ slide.name }}</p>
-            </div>
-          </div>
-          <button class="carousel-button next" @click="nextSlide(1)">
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Sağ Alt Carousel -->
-      <div class="carousel-container bottom-right">
-        <div class="carousel">
-          <button class="carousel-button prev" @click="prevSlide(2)">
-            <
-          </button>
-          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[2] * 100}%)` }">
-            <div v-for="(slide, index) in cityData.carousels[2]" :key="index" class="carousel-slide">
-              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-              <p class="carousel-name">{{ slide.name }}</p>
-            </div>
-          </div>
-          <button class="carousel-button next" @click="nextSlide(2)">
-            >
-          </button>
-        </div>
-      </div>
-
-      <!-- Sol Alt Carousel -->
-      <div class="carousel-container bottom-left">
-        <div class="carousel">
-          <button class="carousel-button prev" @click="prevSlide(3)">
-            <
-          </button>
-          <div class="carousel-slides" :style="{ transform: `translateX(-${currentSlides[3] * 100}%)` }">
-            <div v-for="(slide, index) in cityData.carousels[3]" :key="index" class="carousel-slide">
-              <img :src="slide.image" :alt="slide.name" class="carousel-image" @click="openModal(slide)" />
-              <p class="carousel-name">{{ slide.name }}</p>
-            </div>
-          </div>
-          <button class="carousel-button next" @click="nextSlide(3)">
-            >
-          </button>
+          <button class="carousel-button next" @click="nextSlide(index)">></button>
         </div>
       </div>
     </div>
 
-    <!-- Carouseller gizlendiğinde gösterilecek animasyonlu yazı -->
     <div v-else class="welcome-container">
       <h2 class="welcome-text">{{ $t('city.welcome', { city: cityName }) }}</h2>
     </div>
 
-    <!-- Modal (Resme tıklandığında açılacak pop-up) -->
     <div v-if="showModal" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <img :src="selectedSlide.image" :alt="selectedSlide.name" class="modal-image" />
-        <h3 class="modal-name">{{ selectedSlide.name }}</h3>
-        <p class="modal-description">{{ selectedSlide.description }}</p>
+      <div class="modal-content meditation" @click.stop>
+        <img :src="selectedSlide.image" :alt="$t(selectedSlide.name)" class="modal-image" />
+        <h3 class="modal-name">{{ $t(selectedSlide.name) }}</h3>
+        <p class="modal-description">{{ $t(selectedSlide.description) }}</p>
         <button class="modal-close-button" @click="closeModal">{{ $t('city.close') }}</button>
       </div>
     </div>
@@ -105,7 +50,7 @@ import axios from 'axios';
 import { citiesData } from '@/data/citiesData';
 
 export default {
-  name: "City",
+  name: 'City',
   data() {
     return {
       showCarousels: true,
@@ -117,11 +62,12 @@ export default {
   },
   computed: {
     cityName() {
-      const name = this.$route.params.cityName;
-      return name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+      const rawCityName = this.$route.params.cityName;
+      return rawCityName ? this.$t(`cities.${rawCityName}`) : '';
     },
     cityData() {
-      return citiesData[this.cityName] || citiesData['Default'];
+      const rawCityName = this.$route.params.cityName;
+      return citiesData[rawCityName] || citiesData['Default'];
     },
   },
   watch: {
@@ -138,7 +84,7 @@ export default {
       try {
         const apiKey = '09dd0052b4d2d41724e431b1832d3107';
         const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${this.cityName},de&appid=${apiKey}&units=metric&lang=de`
+            `https://api.openweathermap.org/data/2.5/weather?q=${this.cityName},de&appid=${apiKey}&units=metric&lang=de`
         );
         const weatherData = {
           temperature: Math.round(response.data.main.temp),
@@ -154,22 +100,18 @@ export default {
         this.$emit('update-weather', null);
       }
     },
-    prevSlide(carouselIndex) {
-      const totalSlides = this.cityData.carousels[carouselIndex].length;
-      if (this.currentSlides[carouselIndex] > 0) {
-        this.currentSlides[carouselIndex]--;
-      } else {
-        this.currentSlides[carouselIndex] = totalSlides - 1; // Baştayken sona git
-      }
+    prevSlide(index) {
+      const total = this.cityData.carousels[index].length;
+      this.currentSlides[index] = this.currentSlides[index] > 0
+          ? this.currentSlides[index] - 1
+          : total - 1;
       this.currentSlides = [...this.currentSlides];
     },
-    nextSlide(carouselIndex) {
-      const totalSlides = this.cityData.carousels[carouselIndex].length;
-      if (this.currentSlides[carouselIndex] < totalSlides - 1) {
-        this.currentSlides[carouselIndex]++;
-      } else {
-        this.currentSlides[carouselIndex] = 0; // Sondayken başa git
-      }
+    nextSlide(index) {
+      const total = this.cityData.carousels[index].length;
+      this.currentSlides[index] = this.currentSlides[index] < total - 1
+          ? this.currentSlides[index] + 1
+          : 0;
       this.currentSlides = [...this.currentSlides];
     },
     toggleCarousels() {
@@ -182,6 +124,14 @@ export default {
     closeModal() {
       this.showModal = false;
       this.selectedSlide = null;
+    },
+    carouselPosition(index) {
+      return [
+        'carousel-container top-right',
+        'carousel-container top-left',
+        'carousel-container bottom-right',
+        'carousel-container bottom-left',
+      ][index];
     },
   },
   mounted() {
@@ -201,7 +151,6 @@ export default {
   overflow: hidden;
 }
 
-/* Şehir başlığı */
 .city-title {
   font-size: 2.5rem;
   font-weight: bold;
@@ -211,7 +160,6 @@ export default {
   z-index: 2;
 }
 
-/* Carousel Grid */
 .carousel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -296,13 +244,18 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
-  padding: 1rem 1.5rem;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
-  font-size: 2rem;
-  border-radius: 50%;
+  font-size: 1.5rem;
+  border-radius: 4px;
+  width: 30px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.3s;
   z-index: 2;
 }
@@ -315,7 +268,6 @@ export default {
   right: 15px;
 }
 
-/* Gizle/Göster Butonu */
 .toggle-button {
   position: absolute;
   top: 10px;
@@ -335,7 +287,6 @@ export default {
   background: rgba(0, 0, 0, 0.8);
 }
 
-/* Welcome Yazısı (Animasyonlu) */
 .welcome-container {
   display: flex;
   flex-direction: column;
@@ -354,11 +305,16 @@ export default {
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Modal Stilleri */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -373,7 +329,7 @@ export default {
 }
 
 .modal-content {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   padding: 1rem;
   border-radius: 15px;
   text-align: center;
@@ -394,18 +350,18 @@ export default {
 .modal-name {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: steelblue;
   margin: 0.5rem 0;
 }
 
 .modal-description {
   font-size: 1rem;
-  color: #666;
+  color: white;
   margin-bottom: 0.5rem;
 }
 
 .modal-close-button {
-  background: #ff4d4d;
+  background: steelblue;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -416,6 +372,7 @@ export default {
 }
 
 .modal-close-button:hover {
-  background: #e63939;
+  background: cadetblue;
 }
 </style>
+```
