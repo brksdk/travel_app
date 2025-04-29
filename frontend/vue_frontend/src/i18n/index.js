@@ -42,7 +42,13 @@ const messages = {
       plannedDeparture: 'Planned Departure',
       plannedArrival: 'Planned Arrival',
       delay: 'Delay (Min)',
-      error: 'Error'
+      error: 'Error',
+      availableRoutes: "Available Routes",
+      route: "Route",
+      fromStation: "From Station",
+      toStation: "To Station",
+      date: "Date",
+      noRoutes: "No routes found"
     },
     city: {
       hide: 'Hide',
@@ -387,7 +393,13 @@ const messages = {
       plannedDeparture: 'Geplante Abfahrt',
       plannedArrival: 'Geplante Ankunft',
       delay: 'Verspätung (Min)',
-      error: 'Fehler'
+      error: 'Fehler',
+      availableRoutes: "Verfügbare Routen",
+      route: "Route",
+      fromStation: "Abfahrtsstation",
+      toStation: "Ankunftsstation",
+      date: "Datum",
+      noRoutes: "Keine Routen gefunden"
     },
     city: {
       hide: 'Ausblenden',

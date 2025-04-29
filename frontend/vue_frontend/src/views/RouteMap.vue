@@ -99,7 +99,7 @@ export default {
     const error = ref('');
     const trainPosition = ref(null);
     const trainIcon = L.icon({
-      iconUrl: '/train-icon.png', // Yerel simge (public klasöründe)
+      iconUrl: '/public/train.png', // Yerel simge (public klasöründe)
       // Alternatif: 'https://cdn-icons-png.flaticon.com/512/2972/2972449.png'
       iconSize: [32, 32],
       iconAnchor: [16, 16],

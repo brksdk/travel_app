@@ -69,37 +69,47 @@
       </form>
     </div>
 
-    <!-- Tren Listesi -->
     <div class="train-results" v-if="searched">
-      <div v-if="trainResults.length > 0">
-        <h2>{{ $t('home.availableTrains') }}</h2>
-        <table class="train-table">
-          <thead>
-            <tr>
-              <th>{{ $t('home.trainNumber') }}</th>
-              <th>{{ $t('home.trainType') }}</th>
-              <th>{{ $t('home.departure') }}</th>
-              <th>{{ $t('home.arrival') }}</th>
-              <th>{{ $t('home.plannedDeparture') }}</th>
-              <th>{{ $t('home.plannedArrival') }}</th>
-              <th>{{ $t('home.delay') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="train in trainResults" :key="train.train_reihenfolge_from">
-              <td>{{ train.train_reihenfolge_from }}</td>
-              <td>{{ train.train_classification }}</td>
-              <td>{{ train.from_station }}</td>
-              <td>{{ train.to_station }}</td>
-              <td>{{ formatTime(train.planned_departure_from) }}</td>
-              <td>{{ formatTime(train.planned_arrival_to) }}</td>
-              <td>{{ train.arrival_delay_from || train.arrival_delay_to || 0 }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div v-if="routeResults.length > 0">
+        <h2>{{ $t('home.availableRoutes') }}</h2>
+        <div v-for="(route, index) in routeResults" :key="index" class="route-container">
+          <h3>{{ $t('home.route') }} {{ index + 1 }}</h3>
+          <table class="train-table">
+            <thead>
+              <tr>
+                <th>{{ $t('home.trainNumber') }}</th>
+                <th>{{ $t('home.fromStation') }}</th>
+                <th>{{ $t('home.toStation') }}</th>
+                <th>{{ $t('home.plannedDeparture') }}</th>
+                <th>{{ $t('home.plannedArrival') }}</th>
+                <th>{{ $t('home.date') }}</th>
+                <th>Predicted Delay</th>
+                <th>Delay Probabilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(leg, legIndex) in route" :key="leg.train_number + leg.station_name_from + legIndex">
+                <td>{{ leg.train_number }}</td>
+                <td>{{ leg.station_name_from }}</td>
+                <td>{{ leg.station_name_to }}</td>
+                <td>{{ formatTime(leg.planned_departure_from) }}</td>
+                <td>{{ formatTime(leg.planned_arrival_to) }}</td>
+                <td>{{ leg.planned_arrival_date_from }}</td>
+                <td>{{ getPredictedDelay(leg, index, legIndex) || '-' }} min</td>
+                <td>
+                  <ul>
+                    <li v-for="(prob, category) in getCategoryProbabilities(leg, index, legIndex)" :key="category">
+                      {{ category }}: {{ prob }}%
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div v-else>
-        <p>{{ $t('home.noTrains') }}</p>
+        <p>{{ $t('home.noRoutes') }}</p>
         <p v-if="errorMessage" class="error-message">{{ $t('home.error') }}: {{ errorMessage }}</p>
       </div>
     </div>
@@ -129,7 +139,8 @@ export default {
       toCity: '',
       selectedDate: '',
       selectedTime: '',
-      trainResults: [],
+      routeResults: [],
+      predictionResults: [],
       searched: false,
       errorMessage: null,
     };
@@ -173,7 +184,7 @@ export default {
       console.log(`Filtreleme: ${field}, Query: ${query}`);
       if (query) {
         const filtered = this.stations.filter(station =>
-            station && station.toLowerCase().startsWith(query)
+          station && station.toLowerCase().startsWith(query)
         );
         console.log("Filtrelenmiş şehirler:", filtered);
         if (field === 'from') {
@@ -211,7 +222,7 @@ export default {
       console.log("Gönderilen veri:", formData);
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/trains", {
+        const response = await fetch("http://127.0.0.1:5000/api/route_plan", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -225,19 +236,53 @@ export default {
           throw new Error(data.error || this.$t('home.error'));
         }
 
-        this.trainResults = data.trains || [];
-        if (this.trainResults.length === 0) {
-          console.log("Hiç tren bulunamadı, veri doğru mu?");
+        this.routeResults = data.routes || [];
+        this.predictionResults = data.predictions || [];
+        if (this.routeResults.length === 0) {
+          console.log("Hiç rota bulunamadı, veri doğru mu?");
         }
       } catch (error) {
-        console.error("Tren arama hatası:", error);
+        console.error("Rota arama hatası:", error);
         this.errorMessage = error.message;
-        this.trainResults = [];
+        this.routeResults = [];
+        this.predictionResults = [];
       }
     },
     formatTime(time) {
       if (!time) return '-';
-      return time;
+      return time.split('T')[1]?.slice(0, 5) || time; // Sadece saat:dakika
+    },
+    normalizeString(str) {
+      return str ? str.normalize('NFC') : str; // Unicode normalizasyonu
+    },
+    getPredictedDelay(leg, routeIndex, legIndex) {
+      console.log('Eşleştirme denemesi:', {
+        leg_station_from: leg.station_name_from,
+        leg_station_to: leg.station_name_to,
+        leg_train_number: leg.train_number,
+        predictionResults: this.predictionResults
+      });
+      const prediction = this.predictionResults.find(
+        p => this.normalizeString(p.station_name_from) === this.normalizeString(leg.station_name_from) &&
+             this.normalizeString(p.station_name_to) === this.normalizeString(leg.station_name_to) &&
+             String(p.train_number) === String(leg.train_number)
+      );
+      if (!prediction) {
+        console.warn('Tahmin bulunamadı:', {
+          leg_station_from: leg.station_name_from,
+          leg_station_to: leg.station_name_to,
+          leg_train_number: leg.train_number
+        });
+      }
+      return prediction ? prediction.predicted_delay : '-';
+    },
+    getCategoryProbabilities(leg, routeIndex, legIndex) {
+      const prediction = this.predictionResults.find(
+        p => this.normalizeString(p.station_name_from) === this.normalizeString(leg.station_name_from) &&
+             this.normalizeString(p.station_name_to) === this.normalizeString(leg.station_name_to) &&
+             String(p.train_number) === String(leg.train_number)
+      );
+      return prediction ? prediction.category_probabilities : {};
     },
   },
 };
@@ -406,7 +451,7 @@ export default {
   margin-bottom: 2rem
 }
 
-.cities h2{
+.cities h2 {
   font-weight: bold;
 }
 
@@ -441,6 +486,10 @@ export default {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 2rem 0;
+}
+
+.route-container {
+  margin-bottom: 2rem;
 }
 
 .train-table {
