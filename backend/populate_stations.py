@@ -57,5 +57,5 @@ def populate_stations():
         conn.commit()
 
 # Ana çalıştırma bloğunu yorum satırına al
-# if __name__ == "__main__":
-#     populate_stations()
+#if __name__ == "__main__":
+#    populate_stations()

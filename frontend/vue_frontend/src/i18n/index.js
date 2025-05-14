@@ -48,7 +48,16 @@ const messages = {
       fromStation: "From Station",
       toStation: "To Station",
       date: "Date",
-      noRoutes: "No routes found"
+      noRoutes: "No routes found",
+      start: "Start",
+      goal: "Goal",
+      details: "Details",
+      hideDetails:"Hide details",
+      loading:"Please wait",
+      showAlternative:"Alternative",
+      alternativeRoute:"Alternative Route",
+      hideAlternative:"Hide Alternative",
+      missingFields:"Missing Fields!"
     },
     city: {
       hide: 'Hide',
@@ -89,7 +98,8 @@ const messages = {
       Saarbrücken: 'Saarbrücken',
       Augsburg: 'Augsburg',
       Wiesbaden: 'Wiesbaden',
-      Erfurt: 'Erfurt'
+      Erfurt: 'Erfurt',
+      Heidelberg: 'Heidelberg'
     },
     sights: {
       berlin: {
@@ -342,6 +352,16 @@ const messages = {
         egapark: 'EgaPark',
         egapark_desc: 'EgaPark is a sprawling garden in Erfurt, known for its colorful flowerbeds, sculptures, and observation tower. Spanning 36 hectares, it features themed areas like the Japanese Garden and a butterfly house. The park hosts horticultural shows and family-friendly events. Visitors can relax by its ponds or explore seasonal displays. It’s a vibrant green space for nature and leisure.'
       },
+    heidelberg: {
+      heidelberg_schloss: 'Heidelberg Castle',
+      heidelberg_schloss_desc: 'Heidelberg Castle is one of the most famous castle ruins in Germany. Perched above the Old Town, it offers not only a rich history but also breathtaking views over the Neckar River and the city. Visitors can explore the impressive remains, visit the Pharmacy Museum, and reach the site via the mountain railway.',
+      alte_bruecke: 'Old Bridge',
+      alte_bruecke_desc: 'The Old Bridge, officially known as the Karl Theodor Bridge, is a historic landmark of Heidelberg. It connects the Old Town with the opposite bank of the Neckar River and offers picturesque views of the castle. Built in the 18th century, it is a popular photo spot for tourists.',
+      philosophenweg: 'Philosopher\'s Walk',
+      philosophenweg_desc: 'The Philosopher\'s Walk is a scenic walking path with spectacular views of Heidelberg’s Old Town, the castle, and the river. Once a retreat for scholars and poets, it is now a popular place for walks, especially in spring when the surrounding nature is in full bloom.',
+      universitaetsbibliothek: 'Heidelberg University Library',
+      universitaetsbibliothek_desc: 'The Heidelberg University Library is an architectural gem and one of the oldest libraries in Germany. Part of the prestigious Heidelberg University, it impresses with its magnificent facade and valuable historical collections. A must-visit for those interested in history and literature.'
+    },
       default: {
         sight_1: 'Default Sight 1',
         sight_1_desc: 'This is a placeholder for a notable sight in a city. It represents a historic or cultural landmark that attracts visitors. The site may offer guided tours or exhibits to explore its significance. Its architecture or history makes it a must-see destination. Visitors can enjoy its beauty and learn about the city’s heritage.',
@@ -399,7 +419,16 @@ const messages = {
       fromStation: "Abfahrtsstation",
       toStation: "Ankunftsstation",
       date: "Datum",
-      noRoutes: "Keine Routen gefunden"
+      noRoutes: "Keine Routen gefunden",
+      start: "Start",
+      goal: "Ziel",
+      details: "Details",
+      hideDetails:"Details ausblenden",
+      loading:"Bitte warten Sie",
+      showAlternative:"Alternative",
+      alternativeRoute:"Alternativroute",
+      hideAlternative:"Alternative ausblenden",
+      missingFields:"Fehlende Felder!"
     },
     city: {
       hide: 'Ausblenden',
@@ -440,7 +469,8 @@ const messages = {
       Saarbrücken: 'Saarbrücken',
       Augsburg: 'Augsburg',
       Wiesbaden: 'Wiesbaden',
-      Erfurt: 'Erfurt'
+      Erfurt: 'Erfurt',
+      Heidelberg: 'Heidelberg'
     },
     sights: {
       berlin: {
@@ -693,6 +723,16 @@ const messages = {
         egapark: 'EgaPark',
         egapark_desc: 'Der EgaPark ist ein weitläufiger Garten in Erfurt, bekannt für seine farbenfrohen Blumenbeete, Skulpturen und den Aussichtsturm. Auf 36 Hektar bietet er thematische Bereiche wie den Japanischen Garten und ein Schmetterlingshaus. Der Park veranstaltet Gartenbauausstellungen und familienfreundliche Events. Besucher können an den Teichen entspannen oder saisonale Displays erkunden. Es ist ein lebendiger grüner Raum für Natur und Freizeit.'
       },
+    heidelberg: {
+      heidelberg_schloss: 'Heidelberger Schloss',
+      heidelberg_schloss_desc: 'Das Heidelberger Schloss ist eine der berühmtesten Schlossruinen Deutschlands. Hoch über der Altstadt gelegen, bietet es nicht nur eine reiche Geschichte, sondern auch einen atemberaubenden Blick auf den Neckar und die Stadt. Besucher können die imposanten Überreste erkunden, das Apothekenmuseum besuchen und mit der Bergbahn anreisen.',
+      alte_bruecke: 'Alte Brücke',
+      alte_bruecke_desc: 'Die Alte Brücke, offiziell Karl-Theodor-Brücke, ist ein historisches Wahrzeichen von Heidelberg. Sie verbindet die Altstadt mit dem gegenüberliegenden Neckarufer und bietet malerische Ausblicke auf das Schloss. Die Brücke stammt aus dem 18. Jahrhundert und ist ein beliebter Fotospot für Touristen.',
+      philosophenweg: 'Philosophenweg',
+      philosophenweg_desc: 'Der Philosophenweg ist ein idyllischer Spazierweg mit spektakulärem Blick auf die Heidelberger Altstadt, das Schloss und den Fluss. Er war einst ein Rückzugsort für Gelehrte und Dichter und ist heute ein beliebter Ort für Spaziergänge, besonders im Frühling, wenn die Natur in voller Blüte steht.',
+      universitaetsbibliothek: 'Universitätsbibliothek Heidelberg',
+      universitaetsbibliothek_desc: 'Die Universitätsbibliothek Heidelberg ist ein architektonisches Juwel und eine der ältesten Bibliotheken Deutschlands. Sie gehört zur renommierten Universität Heidelberg und beeindruckt durch ihre prachtvolle Fassade und wertvolle historische Bestände. Ein Besuch lohnt sich für Geschichts- und Literaturinteressierte.'
+  }
     }
   }
 };

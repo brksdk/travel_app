@@ -21,7 +21,7 @@ const getCityImage = (cityName) => {
 export const citiesList = [
   "Berlin", "Munich", "Hamburg", "Cologne", "Frankfurt", "Stuttgart", "Düsseldorf", "Dresden", "Leipzig", "Hannover",
   "Nuremberg", "Bremen", "Dortmund", "Essen", "Bonn", "Mannheim", "Karlsruhe", "Freiburg", "Kiel", "Rostock",
-  "Mainz", "Saarbrücken", "Augsburg", "Wiesbaden", "Erfurt"
+  "Mainz", "Saarbrücken", "Augsburg", "Wiesbaden", "Erfurt","Heidelberg"
 ];
 
 export const citiesData = {
@@ -555,6 +555,30 @@ export const citiesData = {
       ],
     ]
   },
+
+  Heidelberg: {
+  background: getCityImage('Heidelberg'),
+  carousels: [
+    [
+      { image: images["heidelberg_schloss1"], name: "sights.heidelberg.heidelberg_schloss", description: "sights.heidelberg.heidelberg_schloss_desc" },
+      { image: images["heidelberg_schloss2"], name: "sights.heidelberg.heidelberg_schloss", description: "sights.heidelberg.heidelberg_schloss_desc" },
+      { image: images["heidelberg_schloss3"], name: "sights.heidelberg.heidelberg_schloss", description: "sights.heidelberg.heidelberg_schloss_desc" }
+    ],
+    [
+      { image: images["alte_bruecke1"], name: "sights.heidelberg.alte_bruecke", description: "sights.heidelberg.alte_bruecke_desc" },
+      { image: images["alte_bruecke2"], name: "sights.heidelberg.alte_bruecke", description: "sights.heidelberg.alte_bruecke_desc" }
+    ],
+    [
+      { image: images["philosophenweg1"], name: "sights.heidelberg.philosophenweg", description: "sights.heidelberg.philosophenweg_desc" },
+      { image: images["philosophenweg2"], name: "sights.heidelberg.philosophenweg", description: "sights.heidelberg.philosophenweg_desc" }
+    ],
+    [
+      { image: images["universitaetsbibliothek1"], name: "sights.heidelberg.universitaetsbibliothek", description: "sights.heidelberg.universitaetsbibliothek_desc" },
+      { image: images["universitaetsbibliothek2"], name: "sights.heidelberg.universitaetsbibliothek", description: "sights.heidelberg.universitaetsbibliothek_desc" }
+    ]
+  ]
+},
+
   Default: {
     background: getCityImage('Default'),
     carousels: [

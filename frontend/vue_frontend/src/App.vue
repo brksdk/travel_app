@@ -136,11 +136,21 @@ export default defineComponent({
 </script>
 
 <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 #app {
-  min-height: 100vh;
+  min-height: 100%;
   background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
   background-color: #f0f0f0;
 }
+
 
 /* Navbar */
 .navbar {

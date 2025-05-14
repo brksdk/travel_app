@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
 import requests
 import json
+import math
 
 app = Flask("__main__")
 CORS(app)
@@ -13,7 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Mevcut modeller (User, Streckentabelle, Stations, Sollstrecken) aynı kalıyor
+# Mevcut modeller (User, Streckentabelle, Stations, Sollstrecken, SollfahrplanReihenfolge)
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -22,6 +23,19 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     passwort = db.Column(db.String(120), nullable=False)
     tel_nummer = db.Column(db.String(20), nullable=False)
+
+class SollfahrplanReihenfolge(db.Model):
+    __tablename__ = 'sollfahrplan_reihenfolge'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    zugtyp = db.Column(db.String(50))
+    zug = db.Column(db.Integer)
+    halt = db.Column(db.String(100), nullable=False)
+    ankunft_geplant = db.Column(db.Time)
+    abfahrt_geplant = db.Column(db.Time)
+    gleis = db.Column(db.String(10))
+    halt_nummer = db.Column(db.Integer)
+    train_avg_30 = db.Column(db.Float)
+    station_avg_30 = db.Column(db.Float)
 
 class Streckentabelle(db.Model):
     __tablename__ = 'streckentabelle'
@@ -57,7 +71,16 @@ class Sollstrecken(db.Model):
     order_to = db.Column(db.Integer)
     station_name_to = db.Column(db.String(100), nullable=False)
 
-# Mevcut endpoint'ler (/api/register, /api/login, vb.) aynı kalıyor
+# JSON NaN düzeltmesi
+def sanitize_json(data):
+    if isinstance(data, dict):
+        return {k: sanitize_json(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_json(item) for item in data]
+    elif isinstance(data, float) and (math.isnan(data) or math.isinf(data)):
+        return 0
+    return data
+
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
@@ -143,12 +166,10 @@ def delete_user(user_id):
 @app.route('/api/stations', methods=['GET'])
 def get_stations():
     try:
-        from_stations = db.session.query(Streckentabelle.station_name_from).distinct().all()
-        to_stations = db.session.query(Streckentabelle.station_name_to).distinct().all()
-        stations = set([station[0] for station in from_stations] + [station[0] for station in to_stations])
-        stations = sorted(list(stations))
-        print(f"Returning {len(stations)} stations from /api/stations")
-        return jsonify({"stations": stations})
+        stations = db.session.query(SollfahrplanReihenfolge.halt).distinct().all()
+        station_list = sorted(set(station[0] for station in stations if station[0] is not None))
+        print(f"Returning {len(station_list)} stations from /api/stations")
+        return jsonify({"stations": station_list})
     except Exception as e:
         print(f"Error in get_stations: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -278,49 +299,6 @@ def draw_route():
         print(f"Error in draw_route: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/trains', methods=['POST'])
-def get_trains():
-    data = request.json
-    from_station = data.get('from_station', '').strip()
-    to_station = data.get('to_station', '').strip()
-    travel_date = data.get('travel_date')
-    travel_time = data.get('travel_time')
-    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}, time={travel_time}")
-    if not from_station or not to_station or not travel_date:
-        return jsonify({"error": "Missing required fields."}), 400
-    try:
-        travel_date_obj = datetime.strptime(travel_date, "%Y-%m-%d").date()
-        print(f"Parsed date: {travel_date_obj}")
-        query = db.session.query(Streckentabelle).filter(
-            Streckentabelle.station_name_from == from_station,
-            Streckentabelle.station_name_to == to_station,
-            Streckentabelle.planned_arrival_date_from == travel_date_obj
-        )
-        if travel_time:
-            travel_time_obj = datetime.strptime(travel_time, "%H:%M").time()
-            print(f"Parsed time: {travel_time_obj}")
-            query = query.filter(Streckentabelle.planned_departure_from >= travel_time_obj)
-        trains = query.all()
-        print(f"Bulunan trenler: {len(trains)}")
-        train_list = [
-            {
-                "id": train.id,
-                "train_reihenfolge_from": train.train_reihenfolge_from,
-                "train_classification": train.train_classification,
-                "from_station": train.station_name_from,
-                "to_station": train.station_name_to,
-                "planned_departure_from": f"{train.planned_departure_from.strftime('%H:%M:%S')}" if train.planned_departure_from else None,
-                "planned_arrival_to": f"{train.planned_arrival_to.strftime('%H:%M:%S')}" if train.planned_arrival_to else None,
-                "arrival_delay_from": train.arrival_delay_from,
-                "arrival_delay_to": train.arrival_delay_to
-            }
-            for train in trains
-        ]
-        return jsonify({"trains": train_list})
-    except Exception as e:
-        print(f"Hata: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
 @app.route('/api/route_plan', methods=['POST'])
 def route_plan():
     data = request.json
@@ -328,10 +306,10 @@ def route_plan():
     to_station = data.get('to_station', '').strip()
     travel_date = data.get('travel_date')
     travel_time = data.get('travel_time')
+    print(f"Alınan veri: from={from_station}, to={to_station}, date={travel_date}, time={travel_time}")
     if not from_station or not to_station or not travel_date or not travel_time:
         return jsonify({"error": "Missing required fields."}), 400
     try:
-        # Jule'nin API'sine istek
         response = requests.get(
             "http://127.0.0.1:5001/route",
             params={
@@ -340,29 +318,26 @@ def route_plan():
                 "date": travel_date,
                 "time": travel_time
             },
-            timeout=10
+            timeout=20
         )
+        print(f"flaskapp /route response: {response.text}")
+        print(f"Raw response from flaskapp /route: {response.text}")
         if response.status_code != 200:
-            print(f"flask_app.py response: {response.text}")
+            print(f"flaskapp /route response: {response.text}")
             return jsonify({"error": "Error in route planning service."}), 500
-        # Ham yanıtı logla
-        print(f"Raw response from flask_app: {response.text}")
+        print(f"Raw response from flaskapp /route: {response.text}")
         try:
             routes = response.json()
         except ValueError as e:
             print(f"JSON decode error: {str(e)}")
-            try:
-                routes = json.loads(response.text)
-            except json.JSONDecodeError:
-                return jsonify({"error": "Invalid JSON from route planning service."}), 500
-        print(f"Parsed routes: {routes}")
+            return jsonify({"error": "Invalid JSON from route planning service."}), 500
+        print(f"Parsed routes: {json.dumps(routes, indent=2, default=str)}")
         if not routes:
             return jsonify({"error": "No routes found."}), 404
-        # routes'un bir liste olduğundan emin ol
         if not isinstance(routes, list):
             print(f"Invalid routes type: {type(routes)}")
             return jsonify({"error": f"Expected list for routes, got {type(routes)}"}), 400
-        # Veriyi predict_app.py'nin beklediği formata dönüştür
+
         formatted_routes = []
         for route in routes:
             if not isinstance(route, list):
@@ -373,77 +348,215 @@ def route_plan():
                 if not isinstance(item, dict):
                     print(f"Invalid item format: {item}")
                     return jsonify({"error": f"Expected dict for item, got {type(item)}"}), 400
+                required_fields = [
+                    'station_name_from', 'station_name_to', 'train_number',
+                    'planned_arrival_date_from', 'planned_departure_from', 'planned_arrival_to',
+                    'halt_nummer', 'station_avg_30', 'train_avg_30'
+                ]
+                for field in required_fields:
+                    if field not in item:
+                        print(f"Missing field {field} in item: {item}")
+                        return jsonify({"error": f"Missing required field: {field}"}), 400
                 try:
-                    arrival_date = datetime.strptime(
-                        item['planned_arrival_date_from'], "%a, %d %b %Y %H:%M:%S %Z"
-                    )
-                    departure_time = datetime.strptime(
-                        item['planned_departure_from'], "%a, %d %b %Y %H:%M:%S %Z"
-                    )
-                    arrival_time = datetime.strptime(
-                        item['planned_arrival_to'], "%a, %d %b %Y %H:%M:%S %Z"
-                    )
+                    arrival_date_str = item['planned_arrival_date_from']
+                    departure_time_str = item['planned_departure_from']
+                    arrival_time_str = item['planned_arrival_to']
+                    try:
+                        arrival_date_dt = datetime.strptime(arrival_date_str, "%a, %d %b %Y %H:%M:%S GMT")
+                        departure_time_dt = datetime.strptime(departure_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                        arrival_time_dt = datetime.strptime(arrival_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    except ValueError as e:
+                        print(f"Error parsing datetime: {str(e)}")
+                        return jsonify({"error": f"Invalid datetime format: {str(e)}"}), 400
+                    formatted_arrival_date = arrival_date_dt.strftime("%Y-%m-%d")
+                    formatted_departure_time = departure_time_dt.strftime("%H:%M:%S")
+                    formatted_arrival_time = arrival_time_dt.strftime("%H:%M:%S")
+                    station_avg = 0 if not isinstance(item['station_avg_30'], (int, float)) or math.isnan(item['station_avg_30']) else item['station_avg_30']
+                    train_avg = 0 if not isinstance(item['train_avg_30'], (int, float)) or math.isnan(item['train_avg_30']) else item['train_avg_30']
                     formatted_item = {
                         "station_name_from": item['station_name_from'].encode('utf-8').decode('utf-8'),
                         "station_name_to": item['station_name_to'].encode('utf-8').decode('utf-8'),
-                        "planned_arrival_date_from": arrival_date.strftime("%Y-%m-%d"),
-                        "planned_departure_from": departure_time.strftime("%H:%M:%S"),
-                        "planned_arrival_to": arrival_time.strftime("%H:%M:%S"),
-                        "train_number": str(int(item['train_number']))
+                        "planned_arrival_date_from": formatted_arrival_date,
+                        "planned_departure_from": formatted_departure_time,
+                        "planned_arrival_to": formatted_arrival_time,
+                        "train_number": str(int(item['train_number'])),
+                        "reihenfolge_from": item['halt_nummer'],
+                        "station_avg_delay_7_30": station_avg,
+                        "train_avg_delay_7_30": train_avg
                     }
                     formatted_route.append(formatted_item)
-                except ValueError as e:
-                    print(f"Error parsing datetime: {str(e)}")
-                    return jsonify({"error": "Invalid datetime format in routes."}), 500
+                except Exception as e:
+                    print(f"Error processing item: {str(e)}")
+                    return jsonify({"error": f"Error processing route item: {str(e)}"}), 500
             formatted_routes.append(formatted_route)
-        print("Formatted Routes:", json.dumps(formatted_routes, indent=2))
-        # Emre'nin API'sine istek
+        print("Formatted Routes for Emre:", json.dumps(formatted_routes, indent=2))
+
         emre_response = requests.post(
             "http://127.0.0.1:5002/predict",
             json=formatted_routes,
-            timeout=10
+            timeout=45
         )
-        print(f"Predict API response: {emre_response.text}")
+        print(f"First Predict API response: {emre_response.text}")
         if emre_response.status_code != 200:
             return jsonify({"error": "Error in prediction service.", "details": emre_response.text}), 500
-        predictions = emre_response.json()
-        # Tahminleri ve rotaları standardize et
-        standardized_predictions = [
-            {
-                "station_name_from": p['station_name_from'].encode('utf-8').decode('utf-8'),
-                "station_name_to": p['station_name_to'].encode('utf-8').decode('utf-8'),
-                "train_number": p['train_number'],
-                "planned_arrival_date_from": p['planned_arrival_date_from'],
-                "planned_departure_from": p['planned_departure_from'],
-                "planned_arrival_to": p['planned_arrival_to'],
-                "predicted_delay": p['predicted_delay'],
-                "category_probabilities": p['category_probabilities']
-            }
-            for p in predictions
-        ]
-        standardized_routes = []
+        first_predictions = emre_response.json()
+
+        routes_with_predictions = []
+        prediction_index = 0
+        prev_arrival_time = None
+        prev_train_number = None
         for route in routes:
-            standardized_route = []
-            for item in route:
-                standardized_route.append({
+            route_with_predictions = []
+            for i, item in enumerate(route):
+                if prediction_index >= len(first_predictions):
+                    print(f"Prediction index out of range: {prediction_index}")
+                    return jsonify({"error": "Mismatch in predictions and route items."}), 500
+                pred = first_predictions[prediction_index]
+                prediction_index += 1
+                arrival_date_str = item['planned_arrival_date_from']
+                departure_time_str = item['planned_departure_from']
+                arrival_time_str = item['planned_arrival_to']
+                try:
+                    arrival_date_dt = datetime.strptime(arrival_date_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    departure_time_dt = datetime.strptime(departure_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    arrival_time_dt = datetime.strptime(arrival_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                except ValueError as e:
+                    print(f"Error parsing datetime: {str(e)}")
+                    return jsonify({"error": f"Invalid datetime format: {str(e)}"}), 400
+                arrival_date = arrival_date_dt.strftime("%Y-%m-%d")
+                departure_time = departure_time_dt.strftime("%H:%M:%S")
+                arrival_time = arrival_time_dt.strftime("%H:%M:%S")
+                departure_dt = datetime.strptime(f"{arrival_date} {departure_time}", "%Y-%m-%d %H:%M:%S")
+                arrival_dt = datetime.strptime(f"{arrival_date} {arrival_time}", "%Y-%m-%d %H:%M:%S")
+                if arrival_dt < departure_dt:
+                    arrival_dt += timedelta(days=1)
+                umsteigeort = None
+                umsteigezeit_minuten = None
+                if i + 1 < len(route) and str(int(item['train_number'])) != str(int(route[i + 1]['train_number'])):
+                    umsteigeort = item['station_name_to']
+                    next_departure_str = route[i + 1]['planned_departure_from']
+                    next_departure_dt = datetime.strptime(next_departure_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    umsteigezeit_minuten = (next_departure_dt - arrival_dt).total_seconds() / 60
+                station_avg = 0 if not isinstance(item['station_avg_30'], (int, float)) or math.isnan(item['station_avg_30']) else item['station_avg_30']
+                train_avg = 0 if not isinstance(item['train_avg_30'], (int, float)) or math.isnan(item['train_avg_30']) else item['train_avg_30']
+                route_item = {
                     "station_name_from": item['station_name_from'].encode('utf-8').decode('utf-8'),
                     "station_name_to": item['station_name_to'].encode('utf-8').decode('utf-8'),
+                    "planned_departure_from": departure_dt.isoformat(),
+                    "planned_arrival_to": arrival_dt.isoformat(),
                     "train_number": str(int(item['train_number'])),
-                    "planned_arrival_date_from": item['planned_arrival_date_from'],
-                    "planned_departure_from": item['planned_departure_from'],
-                    "planned_arrival_to": item['planned_arrival_to']
-                })
-            standardized_routes.append(standardized_route)
+                    "departure_date": arrival_date,
+                    "zugtyp": item['zugtyp'] if 'zugtyp' in item else '',
+                    "halt_nummer": item['halt_nummer'],
+                    "train_avg_30": train_avg,
+                    "station_avg_30": station_avg,
+                    "umsteigeort": umsteigeort,
+                    "umsteigezeit_minuten": umsteigezeit_minuten,
+                    "predicted_delay": pred['predicted_delay'],
+                    "category_probabilities": pred['category_probabilities']
+                }
+                route_with_predictions.append(route_item)
+                prev_arrival_time = arrival_dt
+            routes_with_predictions.append(route_with_predictions)
+        print("Routes with Predictions for Jule:", json.dumps(routes_with_predictions, indent=2))
+
+        replan_response = requests.post(
+            "http://127.0.0.1:5001/api/analyse_and_replan",
+            json={"detailed_routes": routes_with_predictions},
+            timeout=60
+        )
+        print(f"Replan API response: {replan_response.text}")
+
+        if replan_response.status_code != 200:
+            return jsonify({"error": "Error in replan service.", "details": replan_response.text}), 500
+        replan_data = replan_response.json()
+        if replan_data.get("status") != "success":
+            return jsonify({"error": "Replan service returned an error.", "details": replan_data.get("message")}), 500
+        analysed_routes = replan_data.get("analysed_routes", [])
+        if not analysed_routes:
+            return jsonify({"error": "No analysed routes returned from replan service."}), 404
+
+        final_routes = []
+        for route in analysed_routes:
+            if not isinstance(route, dict):
+                print(f"Invalid route format: {route}")
+                return jsonify({"error": f"Expected dict for route, got {type(route)}"}), 400
+            urspruengliche_route = route.get('urspruengliche_route', [])
+            alternative_routeninfos = route.get('alternative_routeninfos', [])
+            erwartete_gesamtverspaetung = route.get('erwartete_gesamtverspaetung_minuten', 0)
+            gesamtverspaetungswahrscheinlichkeit = route.get('gesamtverspaetungswahrscheinlichkeit', 0)
+            formatted_route = []
+            for item in urspruengliche_route:
+                if not isinstance(item, dict):
+                    print(f"Invalid item format: {item}")
+                    return jsonify({"error": f"Expected dict for item, got {type(item)}"}), 400
+                required_fields = [
+                    'station_name_from', 'station_name_to', 'train_number',
+                    'planned_departure_from', 'planned_arrival_to',
+                    'halt_nummer', 'station_avg_30', 'train_avg_30'
+                ]
+                for field in required_fields:
+                    if field not in item:
+                        print(f"Missing field {field} in item: {item}")
+                        return jsonify({"error": f"Missing required field: {field}"}), 400
+                try:
+                    arrival_date_str = item.get('departure_date', '')
+                    if not arrival_date_str:
+                        print(f"Missing departure_date in item: {item}")
+                        return jsonify({"error": "Missing departure_date field"}), 400
+                    departure_time_str = item['planned_departure_from']
+                    arrival_time_str = item['planned_arrival_to']
+                    if 'GMT' in arrival_date_str:
+                        arrival_date_dt = datetime.strptime(arrival_date_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    else:
+                        arrival_date_dt = datetime.strptime(arrival_date_str, "%Y-%m-%d")
+                    try:
+                        departure_time_dt = datetime.strptime(departure_time_str, "%Y-%m-%dT%H:%M:%S")
+                    except ValueError:
+                        departure_time_dt = datetime.strptime(departure_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    try:
+                        arrival_time_dt = datetime.strptime(arrival_time_str, "%Y-%m-%dT%H:%M:%S")
+                    except ValueError:
+                        arrival_time_dt = datetime.strptime(arrival_time_str, "%a, %d %b %Y %H:%M:%S GMT")
+                    formatted_arrival_date = arrival_date_dt.strftime("%Y-%m-%d")
+                    formatted_departure_time = departure_time_dt.strftime("%H:%M:%S")
+                    formatted_arrival_time = arrival_time_dt.strftime("%H:%M:%S")
+                    station_avg = 0 if not isinstance(item['station_avg_30'], (int, float)) or math.isnan(item['station_avg_30']) else item['station_avg_30']
+                    train_avg = 0 if not isinstance(item['train_avg_30'], (int, float)) or math.isnan(item['train_avg_30']) else item['train_avg_30']
+                    formatted_item = {
+                        "station_name_from": item['station_name_from'].encode('utf-8').decode('utf-8'),
+                        "station_name_to": item['station_name_to'].encode('utf-8').decode('utf-8'),
+                        "planned_arrival_date_from": formatted_arrival_date,
+                        "planned_departure_from": formatted_departure_time,
+                        "planned_arrival_to": formatted_arrival_time,
+                        "train_number": item['train_number'],
+                        "reihenfolge_from": item['halt_nummer'],
+                        "station_avg_delay_7_30": station_avg,
+                        "train_avg_delay_7_30": train_avg,
+                        "zugtyp": item['zugtyp'] if 'zugtyp' in item else '',
+                        "predicted_delay": item.get('predicted_delay', 0),
+                        "category_probabilities": item.get('category_probabilities', {})
+                    }
+                    formatted_route.append(formatted_item)
+                except Exception as e:
+                    print(f"Error processing item: {str(e)}")
+                    return jsonify({"error": f"Error processing route item: {str(e)}"}), 500
+            final_route = {
+                "route": formatted_route,
+                "alternative_routeninfos": alternative_routeninfos,
+                "erwartete_gesamtverspaetung_minuten": erwartete_gesamtverspaetung,
+                "gesamtverspaetungswahrscheinlichkeit": gesamtverspaetungswahrscheinlichkeit
+            }
+            final_routes.append(final_route)
+        final_routes = sanitize_json(final_routes)
+        first_predictions = sanitize_json(first_predictions)
         return jsonify({
-            "routes": standardized_routes,
-            "predictions": standardized_predictions
-        })
-    except requests.exceptions.RequestException as e:
-        print(f"Error in API communication: {str(e)}")
-        return jsonify({"error": "Failed to communicate with services."}), 500
+            "routes": final_routes,
+            "predictions": first_predictions
+        }), 200
     except Exception as e:
         print(f"Error in route planning: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
