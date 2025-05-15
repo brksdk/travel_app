@@ -24,18 +24,12 @@ class User(db.Model):
     passwort = db.Column(db.String(120), nullable=False)
     tel_nummer = db.Column(db.String(20), nullable=False)
 
-class SollfahrplanReihenfolge(db.Model):
-    __tablename__ = 'sollfahrplan_reihenfolge'
+class Streckentabelle1103(db.Model):
+    __tablename__ = 'streckentabelle1103'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    zugtyp = db.Column(db.String(50))
-    zug = db.Column(db.Integer)
-    halt = db.Column(db.String(100), nullable=False)
-    ankunft_geplant = db.Column(db.Time)
-    abfahrt_geplant = db.Column(db.Time)
-    gleis = db.Column(db.String(10))
-    halt_nummer = db.Column(db.Integer)
-    train_avg_30 = db.Column(db.Float)
-    station_avg_30 = db.Column(db.Float)
+    station_name_from = db.Column(db.String(100), nullable=False)
+    station_name_to = db.Column(db.String(100), nullable=False)
 
 class Streckentabelle(db.Model):
     __tablename__ = 'streckentabelle'
@@ -164,12 +158,18 @@ def delete_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/stations', methods=['GET'])
+@app.route('/api/stations', methods=['GET'])
 def get_stations():
     try:
-        stations = db.session.query(SollfahrplanReihenfolge.halt).distinct().all()
-        station_list = sorted(set(station[0] for station in stations if station[0] is not None))
-        print(f"Returning {len(station_list)} stations from /api/stations")
-        return jsonify({"stations": station_list})
+        stations_from = db.session.query(Streckentabelle1103.station_name_from).distinct().all()
+        station_list_from = sorted(set(station[0] for station in stations_from if station[0] is not None))
+        stations_to = db.session.query(Streckentabelle1103.station_name_to).distinct().all()
+        station_list_to = sorted(set(station[0] for station in stations_to if station[0] is not None))
+        print(f"Returning {len(station_list_from)} stations_from and {len(station_list_to)} stations_to from /api/stations")
+        return jsonify({
+            "stations_from": station_list_from,
+            "stations_to": station_list_to
+        })
     except Exception as e:
         print(f"Error in get_stations: {str(e)}")
         return jsonify({"error": str(e)}), 500

@@ -82,9 +82,10 @@
 
     <div class="train-results" v-if="searched">
       <!-- Yükleme Animasyonu -->
-      <div v-if="isLoading" class="loading-spinner">
+      <div v-if="isLoading" class="train-animation">
+        <!-- class="loading-spinner">
         <div class="spinner"></div>
-        <p>{{ $t('home.loading') }}</p>
+        <p>{{ $t('home.loading') }}</p>-->
       </div>
       <!-- Rota Sonuçları -->
       <div v-else-if="routeResults.length > 0">
@@ -106,8 +107,8 @@
               class="warning-message"
             >
               <span class="warning-icon blink">⚠️</span>
-              <span class="warning-text blink">Achtung</span>
-              <span>Verspätung Erwarteter Zug: {{ getDelayedTrainNumber(route) }} - Der Zug zum Verpassen: {{ getMissedTrainNumber(route) }}</span>
+              <span class="warning-text blink">{{ $t('home.attention') }}</span>
+              <span>{{ $t('home.warningMessage1') }} ICE {{ getDelayedTrainNumber(route) }} | {{ $t('home.warningMessage2') }} ICE {{ getMissedTrainNumber(route) }}</span>
             </div>
             <div
               v-for="(train, trainIndex) in groupByTrainNumber(route.route)"
@@ -119,7 +120,7 @@
               <!-- Kalkış Saati (Sol Köşe) -->
               <span class="time time-left">{{ formatTimeOnly(train.legs[0].planned_departure_from) }}</span>
               <!-- Tren Tipi ve Numarası -->
-              <span class="train-number">{{ train.zugtyp ? `${train.zugtyp} ${train.train_number}` : train.train_number }}</span>
+              <span class="train-number">{{ train.zugtyp ? `${train.zugtyp} ${train.train_number}` : `ICE ${train.train_number}` }}</span>
               <!-- Varış Saati ve Yeni Beklenen Varış Saati (Sağ Köşe) -->
               <span class="expected-time">{{ calculateExpectedArrivalTime(train) }}</span>
               <span class="on-time-probability">{{ getOnTimeProbability(train) }}%</span>
@@ -158,7 +159,7 @@
               <li v-for="(trainGroup, trainIndex) in groupByTrainNumber(route.route)" :key="trainIndex" class="train-section">
                 <!-- Tren Başlığı -->
                 <div class="train-header">
-                  <span class="train-info">{{ trainGroup.zugtyp ? `${trainGroup.zugtyp} ${trainGroup.train_number}` : trainGroup.train_number }}</span>
+                  <span class="train-info">{{ trainGroup.zugtyp ? `${trainGroup.zugtyp} ${trainGroup.train_number}` : `ICE ${trainGroup.train_number}` }}</span>
                 </div>
                 <!-- Duraklar -->
                 <div v-for="(leg, legIndex) in trainGroup.legs" :key="legIndex" class="station-item">
@@ -196,7 +197,7 @@
                 :class="{ 'last-train': trainIndex === groupByTrainNumber(route.alternative_routeninfos[0].alternative_route).length - 1 }"
               >
                 <span class="time time-left">{{ formatTimeOnly(train.legs[0].planned_departure_from) }}</span>
-                <span class="train-number">{{ train.zugtyp ? `${train.zugtyp} ${train.train_number}` : train.train_number }}</span>
+                <span class="train-number">{{ train.zugtyp ? `${train.zugtyp} ${train.train_number}` : `ICE ${train.train_number}` }}</span>
                 <span class="expected-time">{{ calculateExpectedArrivalTime(train) }}</span>
                 <span class="time time-right">{{ formatTimeOnly(train.legs[train.legs.length - 1].planned_arrival_to) }}</span>
                 <div v-if="trainIndex === 0" class="station station-left">{{ train.legs[0].station_name_from }}</div>
@@ -224,7 +225,7 @@
               <ul class="station-list">
                 <li v-for="(trainGroup, trainIndex) in groupByTrainNumber(route.alternative_routeninfos[0].alternative_route)" :key="trainIndex" class="train-section">
                   <div class="train-header">
-                    <span class="train-info">{{ trainGroup.zugtyp ? `${trainGroup.zugtyp} ${trainGroup.train_number}` : trainGroup.train_number }}</span>
+                    <span class="train-info">{{ trainGroup.zugtyp ? `${trainGroup.zugtyp} ${trainGroup.train_number}` : `ICE ${trainGroup.train_number}` }}</span>
                   </div>
                   <div v-for="(leg, legIndex) in trainGroup.legs" :key="legIndex" class="station-item">
                     <div v-if="legIndex === 0" class="station-detail">
@@ -301,7 +302,7 @@ export default {
     await this.loadStations();
   },
   methods: {
-    async loadStations() {
+async loadStations() {
       try {
         const response = await fetch("http://127.0.0.1:5000/api/stations", {
           method: "GET",
@@ -316,21 +317,39 @@ export default {
           throw new Error(data.error || this.$t('home.error'));
         }
 
-        this.stations = data.stations || [];
-        console.log("Yüklenen şehirler:", this.stations);
+        // Backend'den gelen station_list_from ve station_list_to'yu ayır
+        this.stations_from = data.stations_from || [];
+        this.stations_to = data.stations_to || [];
+        console.log("Yüklenen şehirler (from):", this.stations_from);
+        console.log("Yüklenen şehirler (to):", this.stations_to);
       } catch (error) {
         console.error("Şehirleri çekerken hata:", error);
-        this.errorMessage = error.message; // Backend hatası train-results’a
-        this.stations = [""];
+        this.errorMessage = error.message;
+        this.stations_from = [];
+        this.stations_to = [];
       }
     },
     setDateConstraints() {
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      this.minDate = today.toISOString().split('T')[0];
+      // Yerel zaman diliminde bugünü al
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      this.minDate = `${year}-${month}-${day}`;
+
+      // maxDate için 10 gün sonrası
       const maxDate = new Date(today);
-      maxDate.setDate(today.getDate() + 10);
-      this.maxDate = maxDate.toISOString().split('T')[0];
+      maxDate.setDate(today.getDate() + 8);
+      const maxYear = maxDate.getFullYear();
+      const maxMonth = String(maxDate.getMonth() + 1).padStart(2, '0');
+      const maxDay = String(maxDate.getDate()).padStart(2, '0');
+      this.maxDate = `${maxYear}-${maxMonth}-${maxDay}`;
+
+      console.log('setDateConstraints:', {
+        minDate: this.minDate,
+        maxDate: this.maxDate,
+        localDate: today.toLocaleDateString()
+      });
     },
     async handleSearch() {
       this.searched = true;
@@ -413,17 +432,49 @@ export default {
         : '0';
     },
     getDelayedTrainNumber(route) {
+      if (!route.alternative_routeninfos || !route.alternative_routeninfos.some(info => info.status === 'ALTERNATIVE GEFUNDEN')) {
+        console.log('Gecikme yok, alternatif rota bulunamadı.');
+        return 'Bilinmiyor';
+      }
+
+      const umsteigeort = route.alternative_routeninfos[0].umsteigeort;
+      if (!umsteigeort) {
+        console.log('Umsteigeort tanımlı değil.');
+        return 'Bilinmiyor';
+      }
+
       const groupedTrains = this.groupByTrainNumber(route.route);
-      const delayedTrain = groupedTrains[0];
+      // Geciken tren: umsteigeort'a varan tren
+      const delayedTrain = groupedTrains.find((train, index) => {
+        const lastLeg = train.legs[train.legs.length - 1];
+        return lastLeg.station_name_to === umsteigeort;
+      });
+
       const delayedTrainNumber = delayedTrain ? delayedTrain.train_number : 'Bilinmiyor';
-      console.log('Gecikme Beklenilen Tren:', delayedTrainNumber);
+      console.log('Gecikme Beklenilen Tren:', delayedTrainNumber, 'Umsteigeort:', umsteigeort);
       return delayedTrainNumber;
     },
     getMissedTrainNumber(route) {
+      if (!route.alternative_routeninfos || !route.alternative_routeninfos.some(info => info.status === 'ALTERNATIVE GEFUNDEN')) {
+        console.log('Gecikme yok, alternatif rota bulunamadı.');
+        return 'Bilinmiyor';
+      }
+
+      const umsteigeort = route.alternative_routeninfos[0].umsteigeort;
+      if (!umsteigeort) {
+        console.log('Umsteigeort tanımlı değil.');
+        return 'Bilinmiyor';
+      }
+
       const groupedTrains = this.groupByTrainNumber(route.route);
-      const missedTrain = groupedTrains[1];
+      // Kaçırılan tren: umsteigeort'tan kalkan tren
+      const missedTrain = groupedTrains.find((train, index) => {
+        const firstLeg = train.legs[0];
+        return firstLeg.station_name_from === umsteigeort;
+      });
+
       const missedTrainNumber = missedTrain ? missedTrain.train_number : 'Bilinmiyor';
-      console.log('Kaçırılacak Tren:', missedTrainNumber);
+      console.log('Kaçırılacak Tren:', missedTrainNumber, 'Umsteigeort:', umsteigeort);
       return missedTrainNumber;
     },
     swapCities() {
@@ -433,11 +484,11 @@ export default {
       this.filterStations('from');
       this.filterStations('to');
     },
-    filterStations(field) {
+filterStations(field) {
       const query = (field === 'from' ? this.fromCity : this.toCity).toLowerCase().trim();
       console.log(`Filtreleme: ${field}, Query: ${query}`);
       if (query) {
-        const filtered = this.stations.filter(station =>
+        const filtered = (field === 'from' ? this.stations_from : this.stations_to).filter(station =>
           station && station.toLowerCase().startsWith(query)
         );
         console.log("Filtrelenmiş şehirler:", filtered);
@@ -689,56 +740,77 @@ export default {
       }
       return null;
     },
-    calculateExpectedArrivalTime(train) {
-      if (!train || !train.legs || train.legs.length === 0) return '-';
-      const lastLeg = train.legs[train.legs.length - 1];
-      const arrivalTime = lastLeg.planned_arrival_to;
-      const arrivalDate = lastLeg.planned_arrival_date_from;
+ calculateExpectedArrivalTime(train) {
+  if (!train || !train.legs || train.legs.length === 0) {
+    console.warn('calculateExpectedArrivalTime: Geçersiz tren verisi', train);
+    return '-';
+  }
 
-      const delay = this.getPredictedDelay(
-        lastLeg,
-        this.routeResults.findIndex(r => {
-          const hasMainRoute = Array.isArray(r.route) && r.route.includes(lastLeg);
-          const hasAlternativeRoute = Array.isArray(r.alternative_routeninfos) &&
-                                     r.alternative_routeninfos[0]?.alternative_route &&
-                                     Array.isArray(r.alternative_routeninfos[0].alternative_route) &&
-                                     r.alternative_routeninfos[0].alternative_route.includes(lastLeg);
-          return hasMainRoute || hasAlternativeRoute;
-        }),
-        this.getLegIndex(
-          this.routeResults.find(r => {
-            const hasMainRoute = Array.isArray(r.route) && r.route.includes(lastLeg);
-            const hasAlternativeRoute = Array.isArray(r.alternative_routeninfos) &&
-                                       r.alternative_routeninfos[0]?.alternative_route &&
-                                       Array.isArray(r.alternative_routeninfos[0].alternative_route) &&
-                                       r.alternative_routeninfos[0].alternative_route.includes(lastLeg);
-            return hasMainRoute || hasAlternativeRoute;
-          })?.route,
-          lastLeg
-        )
-      );
+  const lastLeg = train.legs[train.legs.length - 1];
+  const arrivalTime = lastLeg.planned_arrival_to;
+  const arrivalDate = lastLeg.planned_arrival_date_from;
 
-      const totalDelay = delay !== '-' ? this.roundUpDelay(delay) : 0;
+  // Son durak için predicted_delay al
+  const delay = this.getPredictedDelay(
+    lastLeg,
+    this.routeResults.findIndex(r => {
+      const hasMainRoute = Array.isArray(r.route) && r.route.includes(lastLeg);
+      const hasAlternativeRoute = Array.isArray(r.alternative_routeninfos) &&
+                                 r.alternative_routeninfos[0]?.alternative_route &&
+                                 Array.isArray(r.alternative_routeninfos[0].alternative_route) &&
+                                 r.alternative_routeninfos[0].alternative_route.includes(lastLeg);
+      return hasMainRoute || hasAlternativeRoute;
+    }),
+    this.getLegIndex(
+      this.routeResults.find(r => {
+        const hasMainRoute = Array.isArray(r.route) && r.route.includes(lastLeg);
+        const hasAlternativeRoute = Array.isArray(r.alternative_routeninfos) &&
+                                   r.alternative_routeninfos[0]?.alternative_route &&
+                                   Array.isArray(r.alternative_routeninfos[0].alternative_route) &&
+                                   r.alternative_routeninfos[0].alternative_route.includes(lastLeg);
+        return hasMainRoute || hasAlternativeRoute;
+      })?.route || [],
+      lastLeg
+    )
+  );
 
-      try {
-        let date;
-        if (arrivalTime.includes('GMT')) {
-          date = new Date(arrivalTime);
-        } else if (arrivalTime.includes('T')) {
-          date = new Date(arrivalTime + 'Z');
-        } else {
-          const [hours, minutes] = arrivalTime.split(':').map(Number);
-          const [year, month, day] = arrivalDate.split('-').map(Number);
-          date = new Date(Date.UTC(year, month - 1, day, hours, minutes));
-        }
-        date.setMinutes(date.getMinutes() + totalDelay);
-        const formattedTime = `${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
-        return formattedTime;
-      } catch (error) {
-        console.error('calculateExpectedArrivalTime error:', error);
-        return '-';
-      }
-    },
+  const totalDelay = delay !== '-' ? this.roundUpDelay(delay) : 0;
+
+  console.log('calculateExpectedArrivalTime:', {
+    train_number: train.train_number,
+    station_to: lastLeg.station_name_to,
+    planned_arrival: arrivalTime,
+    arrival_date: arrivalDate,
+    predicted_delay: delay,
+    total_delay_minutes: totalDelay
+  });
+
+  try {
+    let date;
+    if (arrivalTime.includes('GMT')) {
+      date = new Date(arrivalTime);
+    } else if (arrivalTime.includes('T')) {
+      date = new Date(arrivalTime + 'Z');
+    } else {
+      const [hours, minutes] = arrivalTime.split(':').map(Number);
+      const [year, month, day] = arrivalDate.split('-').map(Number);
+      date = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+    }
+
+    if (isNaN(date.getTime())) {
+      console.error('calculateExpectedArrivalTime: Geçersiz tarih/zaman', { arrivalTime, arrivalDate });
+      return '-';
+    }
+
+    date.setMinutes(date.getMinutes() + totalDelay);
+    const formattedTime = `${String(date.getUTCHours()).padStart(2, '0')}:${String(date.getUTCMinutes()).padStart(2, '0')}`;
+    console.log('Formatted expected time:', formattedTime);
+    return formattedTime;
+  } catch (error) {
+    console.error('calculateExpectedArrivalTime error:', error, { arrivalTime, arrivalDate, delay });
+    return '-';
+  }
+},
   },
 };
 </script>
@@ -750,7 +822,7 @@ export default {
   right: 3rem; /* time-right'ın soluna yerleştir */
   top: -1.2rem;
   font-size: 0.8rem;
-  color: red;
+  color: limegreen;
   font-weight: bold;
   white-space: nowrap;
 }
@@ -956,7 +1028,6 @@ export default {
   width: 100%;
   margin-bottom: 2rem;
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   border-radius: 4px;
 }
@@ -994,10 +1065,10 @@ export default {
 
 .train-bar {
   position: relative;
-  background-color: #00a680;
+  background-color: teal;
   color: white;
   padding: 0.7rem 0;
-  border: 1px solid #008c66;
+  border: 1px darkgray;
   border-radius: 4px;
   margin-right: 4px;
   text-align: center;
@@ -1007,8 +1078,7 @@ export default {
 }
 
 .alternative-route-container .train-bar {
-  background-color: #1e90ff;
-  border: 1px solid #1873cc;
+  background-color: #00a680;
 }
 
 .train-bar.last-train {
@@ -1036,9 +1106,9 @@ export default {
 .expected-time {
   position: absolute;
   right: 0.5rem;
-  top: -2.4rem;
+  top: -2.0rem;
   font-size: 0.7rem;
-  color: #ff4500;
+  color: red;
   font-weight: bold;
 }
 
@@ -1080,7 +1150,7 @@ export default {
 
 .alternative-button {
   color: #fff;
-  background-color: #ff4500;
+  background-color: steelblue;
   padding: 0.4rem 1rem;
   border-radius: 4px;
   cursor: pointer;
@@ -1090,7 +1160,7 @@ export default {
 }
 
 .alternative-button:hover {
-  background-color: #cc3700;
+  background-color: lightsteelblue;
 }
 
 .details-toggle {
@@ -1206,11 +1276,11 @@ export default {
 
 .warning-message {
   position: absolute;
-  top: -2.8rem;
+  top: -3.8rem;
   left: 50%;
   transform: translateX(-50%);
-  color: red;
-  font-size: 1.0rem;
+  color: black;
+  font-size: 0.9rem;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -1246,6 +1316,86 @@ export default {
   }
   100% {
     opacity: 1;
+  }
+}
+/* train-results container için genel ayarlar */
+/* train-results container için genel ayarlar */
+.train-results {
+  max-width: 90%;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px; /* Yeterli hareket alanı */
+}
+
+/* route-header içindeki hizalamayı koru */
+.route-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* date-box’a göre hiza */
+.date-box {
+  position: relative;
+}
+
+/* train-bar-container için hiza referansı */
+.train-bar-container {
+  position: relative;
+}
+
+/* info-box’lar üstte kalsın */
+.info-box { z-index: 2; }
+
+/* Tren animasyon container’ı */
+.train-animation {
+  position: absolute;
+  width: 500px; /* Resmin genişliği */
+  height: 100px; /* Resmin yüksekliği */
+  background-image: url('/assets/zug.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center;
+  animation: trainLoop 10s linear infinite; /* Sabit hız */
+  z-index: 1; /* Tren arka planda */
+  top: 50%; /* route-header hizası */
+  transform: translateY(-50%);
+}
+
+/* Tren animasyonu */
+@keyframes trainLoop {
+  0% {
+    left: -500px; /* date-box sağından ucuyla başla */
+    transform: translateY(-50%) scaleX(1); /* Normal yön */
+  }
+  50% {
+    left: calc(100% + 100px); /* Sağdan kaybol */
+    transform: translateY(-50%) scaleX(1); /* Normal yön */
+  }
+  51% {
+    left: calc(100% + 100px); /* Sağdan kadraja gir */
+    transform: translateY(-50%) scaleX(-1); /* Y ekseninde simetri */
+  }
+  100% {
+    left: -500px; /* Sola hareket edip başa dön */
+    transform: translateY(-50%) scaleX(-1); /* Ters yön */
+  }
+}
+
+/* Responsive ayarlar */
+@media (max-width: 768px) {
+  .train-animation {
+    width: 300px;
+    height: 60px;
+    animation: trainLoop 8s linear infinite;
+  }
+  @keyframes trainLoop {
+    0% { left: -300px; transform: translateY(-50%) scaleX(1); }
+    50% { left: calc(100% + 60px); transform: translateY(-50%) scaleX(1); }
+    51% { left: calc(100% + 60px); transform: translateY(-50%) scaleX(-1); }
+    100% { left: -300px; transform: translateY(-50%) scaleX(-1); }
   }
 }
 </style>

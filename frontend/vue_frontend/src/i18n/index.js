@@ -28,7 +28,7 @@ const messages = {
     errorLoadingCoordinates: "Error loading coordinates"
   },
     home: {
-      slogan: 'Book your train tickets, plan your trip',
+      slogan: 'Buy your train tickets only after you have planned your train routes!',
       search: 'Search',
       from: 'From (e.g., Köln Hbf)',
       to: 'To (e.g., Aachen Hbf)',
@@ -57,7 +57,11 @@ const messages = {
       showAlternative:"Alternative",
       alternativeRoute:"Alternative Route",
       hideAlternative:"Hide Alternative",
-      missingFields:"Missing Fields!"
+      missingFields:"Missing Fields!",
+      attention:"Attention",
+      warningMessage1:"Delay expected for the train:",
+      warningMessage2:"Transfer at risk for the train:"
+
     },
     city: {
       hide: 'Hide',
@@ -399,7 +403,7 @@ const messages = {
     stations: "Stationen"
   },
     home: {
-      slogan: 'Buchen Sie Ihre Zugtickets, planen Sie Ihre Reise',
+      slogan: 'Kaufen Sie Ihre Zugfahrkarten erst, nachdem Sie Ihre Zugstrecken geplant haben!',
       search: 'Suchen',
       from: 'Von (z.B. Köln Hbf)',
       to: 'Nach (z.B. Aachen Hbf)',
@@ -428,7 +432,10 @@ const messages = {
       showAlternative:"Alternative",
       alternativeRoute:"Alternativroute",
       hideAlternative:"Alternative ausblenden",
-      missingFields:"Fehlende Felder!"
+      missingFields:"Fehlende Felder!",
+      attention:"Achtung",
+      warningMessage1:"Verspätung erwartet für den Zug:",
+      warningMessage2:"Umstieg gefährdet für den Zug:"
     },
     city: {
       hide: 'Ausblenden',
