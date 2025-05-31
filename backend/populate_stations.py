@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, text
 import requests
 import time
 
-# Veritabanı bağlantısı
 DATABASE_URL = 'postgresql://postgres:UWP12345!@35.246.149.161:5432/postgres'
 engine = create_engine(DATABASE_URL)
 
@@ -24,7 +23,6 @@ def get_station_coordinates(station_name):
 def populate_stations():
     """sollstrecken tablosundan istasyon isimlerini al ve koordinatları kaydet"""
     with engine.connect() as conn:
-        # Benzersiz istasyon isimlerini al
         query = """
         SELECT DISTINCT station_name_from FROM sollstrecken
         UNION
@@ -32,10 +30,7 @@ def populate_stations():
         """
         result = conn.execute(text(query))
         stations = [row[0] for row in result]
-
-        # Her istasyon için koordinatları çek ve kaydet
         for station in stations:
-            # Zaten kaydedilmiş mi kontrol et
             check_query = text("SELECT 1 FROM stations WHERE station_name = :name")
             if conn.execute(check_query, {"name": station}).fetchone():
                 print(f"{station} already exists in stations table")
@@ -51,11 +46,8 @@ def populate_stations():
                 print(f"Saved {station}: ({lat}, {lon})")
             else:
                 print(f"Could not find coordinates for {station}")
-            # Nominatim'in rate limit'ine uymak için bekle
             time.sleep(1)
 
         conn.commit()
 
-# Ana çalıştırma bloğunu yorum satırına al
 #if __name__ == "__main__":
-#    populate_stations()
