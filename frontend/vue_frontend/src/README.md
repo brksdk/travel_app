@@ -90,8 +90,8 @@ frontend/vue_frontend/
 │   │   ├── Login.vue          # User login page
 │   │   ├── Register.vue       # User registration page
 │   │   ├── RouteMap.vue       # Interactive route map with Leaflet
-|   App.vue                    # Nav-bar
-|   main.js                     
+|   ├── App.vue                # Nav-bar
+|   ├── main.js                     
 │   ├── data/
 │   │   ├── citiesData.js      # City data for carousels and backgrounds
 │   ├── assets/
