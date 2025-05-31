@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  vorhersage:
+    build:
+      context: ./vorhersage
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./vorhersage:/app
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - app-network
+
+  routenplanung:
+    build:
+      context: ./routenplanung
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./routenplanung:/app
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
