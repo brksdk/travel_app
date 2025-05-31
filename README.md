@@ -12,12 +12,16 @@ The project is organized into two main directories, each with its own detailed R
 ## Project Structure
 ```
 travel_app/
+├── backend/
+|   |   ├──README.md
 ├── docker/
 │   ├── vorhersage/            # Backend microservice for delay prediction
 │   │   ├── README.md          # Detailed backend setup and usage
+|   ├── routenplannung/        # Backend microservice for planning of routes
+│   │   ├── README.md          # Detailed backend setup and usage
 ├── frontend/
-│   ├── vue_frontend/          # Frontend Vue.js application
-│   │   ├── README.md          # Detailed frontend setup and usage
+│   ├── vue_frontend/src          # Frontend Vue.js application
+│   │   |   ├── README.md          # Detailed frontend setup and usage
 ├── README.md                  # This file (project overview)
 ```
 
