@@ -14,7 +14,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Mevcut modeller (User, Streckentabelle, Stations, Sollstrecken, SollfahrplanReihenfolge)
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -65,7 +64,6 @@ class Sollstrecken(db.Model):
     order_to = db.Column(db.Integer)
     station_name_to = db.Column(db.String(100), nullable=False)
 
-# JSON NaN düzeltmesi
 def sanitize_json(data):
     if isinstance(data, dict):
         return {k: sanitize_json(v) for k, v in data.items()}
