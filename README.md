@@ -35,7 +35,8 @@ The backend is a Flask-based microservice responsible for predicting train delay
   - Dockerized for easy deployment.
 - **Technologies**: Python, Flask, scikit-learn, pandas, SQLAlchemy, PostgreSQL, Docker.
 - **Details**: For setup, usage, and API documentation, refer to the [Backend README](https://github.com/brksdk/travel_app/blob/master/docker/vorhersage/README.md).
-
+### docker/routenplanung
+JULE
 ### 2. Frontend (frontend/vue_frontend)
 The frontend is a Vue.js application that provides an intuitive interface for users to plan train journeys, visualize routes, and explore city information. It communicates with the backend API to fetch route plans and delay predictions.
 
@@ -46,7 +47,7 @@ The frontend is a Vue.js application that provides an intuitive interface for us
   - User authentication and admin panel for account management.
   - Multilingual support via Vue I18n.
 - **Technologies**: Vue.js, Vue Router, Vue I18n, Leaflet, Axios, OpenWeatherMap API.
-- **Details**: For setup, usage, and component details, refer to the [Frontend README](https://github.com/brksdk/travel_app/blob/master/frontend/vue_frontend/README.md).
+- **Details**: For setup, usage, and component details, refer to the [Frontend README](https://github.com/brksdk/travel_app/blob/master/frontend/vue_frontend/src/README.md).
 
 ## Prerequisites
 To run TravelApp, ensure you have the following installed:
