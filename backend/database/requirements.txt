@@ -1,1 +1,44 @@
+Technical Requirements
+
+## Python 3.x
+The script is written for Python 3 and uses modern standard libraries.
+PostgreSQL Database
+The data is stored in a PostgreSQL database, which can be hosted either locally or through a cloud provider like Google Cloud.
+Python Packages (installable via pip):
+
+requests – for retrieving data via the DB Timetables API
+psycopg2 – for connecting to the PostgreSQL database
+xml.etree.ElementTree – for parsing the API’s XML responses (part of the standard library)
+datetime, time, re – standard modules for time handling and regular expressions
+
+
+## Database Credentials:
+The following connection details are required in the Verspätungsdaten.py script:
+
+Database name (DB_NAME)
+Username (DB_USER)
+Password (DB_PASSWORD)
+Host/IP address (DB_HOST)
+Port (DB_PORT)
+
+For security and maintainability, we would recommend not to store sensitive information like API keys and credentials directly in the script. Instead using .env files or configuration files would be best suited. 
+
+
+## DB Timetables API Access:
+Requires a free developer account on the DB API Marketplace.
+Upon registration, you receive:
+
+an API Client ID
+and an API Key
+
+  Diese müssen bei jeder Anfrage über den HTTP-Header mitgesendet werden:
+  ```python
+  HEADERS = {
+      'DB-Api-Key': '<dein_key>',
+      'DB-Client-Id': '<deine_client_id>'
+}
+
+
+
+
 
