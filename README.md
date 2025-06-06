@@ -110,6 +110,7 @@ travel_app/
 
 ## Contact
 For questions or contributions, reach out:
+- **Mail:** [Tien Bui Tu](buitu98@yahoo.com)
 - **GitHub:** [Berk Sadikoglu](https://github.com/brksdk)
 - **GitHub** [Jule Schumann](https://github.com/jule2211)
 - **GitHub:** [Yunus Emre Van](https://github.com/yemrevan)
