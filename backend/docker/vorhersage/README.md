@@ -155,20 +155,6 @@ docker/vorhersage/
 - **Training Data:** Sourced from the `streckentabelle` table, split into 80% training and 20% validation based on unique dates.
 - **Weather Data:** Retrieved from the `wetterdaten_zukunft` table for future predictions.
 
-## Contributing
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make your changes and commit (`git commit -m "Add your feature"`).
-4. Push to your branch (`git push origin feature/your-feature`).
-5. Open a pull request with a clear description of your changes.
-
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ## Contact
 For questions or suggestions, feel free to reach out:
 - **GitHub:** [brksdk](https://github.com/brksdk)
-- **Email:** wowitsberk@gmail.com
