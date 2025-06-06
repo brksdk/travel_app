@@ -74,6 +74,3 @@ travel_app/backend/
 - **Nominatim API**: Provides geolocation data for station coordinates.
 - **Google Cloud PostgreSQL**: Stores train schedules, delay data, weather information, user data, and station coordinates.
 
-## Contact
-For questions or contributions, reach out:
-- **GitHub:** [brksdk](https://github.com/brksdk)
