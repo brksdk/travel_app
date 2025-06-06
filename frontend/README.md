@@ -1,6 +1,6 @@
 # TravelApp Frontend
 
-The TravelApp Frontend is a Vue.js-based single-page application (SPA) that provides a user-friendly interface for planning train journeys in Germany. It integrates with the TravelApp backend to offer route planning, delay predictions, user authentication, and city exploration features. The frontend uses Vue 3, Vue Router for navigation, Vue I18n for internationalization, and Leaflet for interactive maps. It features a responsive design with dynamic backgrounds, weather integration, and animated route visualizations.
+The TravelApp Frontend is a Vue.js-based application that provides a user-friendly interface for planning train journeys in Germany. It integrates with the TravelApp backend to offer route planning, delay predictions, user authentication, and city exploration features. The frontend uses Vue 3, Vue Router for navigation, Vue I18n for internationalization, and Leaflet for interactive maps. It features a responsive design with dynamic backgrounds, weather integration, and animated route visualizations.
 
 ## Features
 - **Route Planning**: Allows users to search for train routes between stations, view predicted delays, and explore alternative routes.
