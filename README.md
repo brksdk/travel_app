@@ -25,7 +25,6 @@ travel_app/
 │   │   │   └── README.md       # Delay prediction documentation
 │   │   ├── routenplanung/      # Route planning microservice
 │   │   │   └── README.md       # Route planning documentation
-│   │   ├── docker-compose.yml  # Docker Compose configuration
 │   │   └── README.md           # Docker module documentation
 │   ├── pycharm/                # Station data and user API module
 │   │   └── README.md           # Pycharm module documentation
