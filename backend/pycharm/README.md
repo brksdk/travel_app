@@ -143,7 +143,3 @@ travel_app/backend/pycharm/
 - The `populate_stations.py` script should be run once to populate the `stations` table, or whenever new stations are added to `sollstrecken`.
 - Passwords are hashed using `bcrypt` for security.
 - The API handles NaN/infinite values in JSON responses to ensure compatibility.
-
-## Contact
-For questions or contributions, reach out:
-- **GitHub:** [brksdk](https://github.com/brksdk)
