@@ -68,8 +68,9 @@ Ensure the PostgreSQL database is accessible from the container (update host in 
 
 ## Usage
 1. Ensure the PostgreSQL database is running and the model files (`model.pkl`, `classifier.pkl`, `encoders.pkl`, `class_mapping.pkl`) are generated.
-2. Start the Flask server (or Docker container).
-3. Use tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoint.
+[Google Drive](https://drive.google.com/drive/folders/1g0-Avh2SPoP_rV5Ef9mGfeEP1D2xF7C9)
+3. Start the Flask server (or Docker container).
+4. Use tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoint.
 
 ### Example API Request
 - **Predict Delays:**
