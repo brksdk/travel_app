@@ -106,12 +106,11 @@ travel_app/
 - Ensure the backend API and microservices (`vorhersage` at `http://127.0.0.1:5002`, `routenplanung` at `http://127.0.0.1:5001`) are running before starting the frontend.
 - Replace the OpenWeatherMap API key in `frontend/vue_frontend/src/views/City.vue` with a personal key for production.
 - The admin panel is restricted to the user with ID=1 for security.
-- Station coordinates must be populated using `backend/pycharm/populate_stations.py` before route planning and mapping features work correctly.
-- Data retrieval scripts (`Verspätungsdaten.py`, `fahrplan_scraper.py`) should be scheduled to keep the database updated.
+- Data retrieval scripts z.B wie `Verspätungsdaten.py`, `fahrplan_scraper.py` should be scheduled to keep the database updated.
 
 ## Contact
 For questions or contributions, reach out:
-- **GitHub:** [brksdk](https://github.com/brksdk)
-- **GitHub** [jule2211](https://github.com/jule2211)
-- **GitHub:** [brksdk](https://github.com/yemrevan)
+- **GitHub:** [Berk Sadikoglu](https://github.com/brksdk)
+- **GitHub** [Jule Schumann](https://github.com/jule2211)
+- **GitHub:** [Yunus Emre Van](https://github.com/yemrevan)
 
