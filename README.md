@@ -112,3 +112,6 @@ travel_app/
 ## Contact
 For questions or contributions, reach out:
 - **GitHub:** [brksdk](https://github.com/brksdk)
+- **GitHub** [jule2211](https://github.com/jule2211)
+- **GitHub:** [brksdk](https://github.com/yemrevan)
+
