@@ -1,103 +1,98 @@
 # TravelApp
 
-TravelApp is a comprehensive web application designed for planning train journeys in Germany. It enables users to search for train routes, predict potential delays, visualize routes on an interactive map, and explore city highlights with real-time weather information. The application consists of a backend microservice for delay prediction and a frontend interface for user interaction, leveraging modern web technologies and machine learning.
+TravelApp is a comprehensive train journey planning platform designed for users in Germany, combining real-time route planning, delay predictions, and city exploration features. Built with a modular architecture, it integrates a **Vue.js-based frontend** for an interactive user experience and a **Python Flask-based backend** for data processing, machine learning, and API services. The project leverages PostgreSQL for data storage, Docker for microservices, and external APIs like Deutsche Bahn Timetables, OpenWeatherMap, and Nominatim for enriched functionality.
 
-## Overview
-TravelApp combines a robust backend with a user-friendly frontend to deliver a seamless travel planning experience:
-- **Backend**: A Flask-based microservice that uses Random Forest models to predict train delays based on historical and real-time data from a PostgreSQL database.
-- **Frontend**: A Vue.js-based interface that allows users to search routes, view delay predictions, explore city information, and manage accounts, with support for multiple languages and interactive maps.
+## Project Overview
+TravelApp enables users to plan train journeys with optimized routes, view predicted delays using machine learning, and explore popular German cities with weather and attraction information. It supports user authentication, multilingual interfaces (English and German), and an admin panel for user management. The backend processes train schedules, station coordinates, and delay predictions, while the frontend provides a responsive UI with interactive maps and animated visualizations.
 
-The project is organized into two main directories, each with its own detailed README for setup and usage instructions.
+### Key Features
+- **Route Planning**: Search for train routes with detailed schedules, transfer information, and alternative routes to minimize delays.
+- **Delay Prediction**: Uses Random Forest models to predict train delays based on historical data, weather, and station information.
+- **City Exploration**: Displays attractions and real-time weather for cities like Berlin and München.
+- **User Management**: Supports registration, login, and admin functionalities (restricted to user ID=1).
+- **Interactive Maps**: Visualizes routes with animated train movements using Leaflet.
+- **Multilingual Support**: Offers English and German interfaces with seamless language switching.
+- **Data Integration**: Combines Deutsche Bahn API, scraped timetables, and geolocation data for comprehensive journey planning.
 
 ## Project Structure
 ```
 travel_app/
-├── backend/
-|   |   ├──README.md
-├── docker/
-│   ├── vorhersage/            # Backend microservice for delay prediction
-│   │   ├── README.md          # Detailed backend setup and usage
-|   ├── routenplannung/        # Backend microservice for planning of routes
-│   │   ├── README.md          # Detailed backend setup and usage
-├── frontend/
-│   ├── vue_frontend/src          # Frontend Vue.js application
-│   │   |   ├── README.md          # Detailed frontend setup and usage
-├── README.md                  # This file (project overview)
+├── backend/                    # Backend codebase (Flask, PostgreSQL, Docker)
+│   ├── database/               # Data retrieval scripts
+│   ├── docker/                 # Microservices (route planning, delay prediction)
+│   ├── pycharm/                # Station coordinate population and user API
+│   └── README.md               # Backend-specific documentation
+├── frontend/                   # Frontend codebase (Vue.js)
+│   ├── vue_frontend/           # Vue.js project
+│   │   ├── src/                # Source code (App.vue, views, assets)
+│   │   └── README.md           # Frontend-specific documentation
+└── README.md                   # This file (project overview)
 ```
 
-## Components
-### 1. Backend (docker/vorhersage)
-The backend is a Flask-based microservice responsible for predicting train delays using machine learning models. It integrates with a PostgreSQL database to fetch train schedules and weather data, providing delay predictions and alternative route suggestions.
-
-- **Key Features**:
-  - Delay prediction with Random Forest Regressor and Classifier.
-  - REST API endpoint (`/predict`) for route delay forecasts.
-  - Dockerized for easy deployment.
-- **Technologies**: Python, Flask, scikit-learn, pandas, SQLAlchemy, PostgreSQL, Docker.
-- **Details**: For setup, usage, and API documentation, refer to the [Backend README](https://github.com/brksdk/travel_app/blob/master/docker/vorhersage/README.md).
-### docker/routenplanung
-JULE
-### 2. Frontend (frontend/vue_frontend)
-The frontend is a Vue.js application that provides an intuitive interface for users to plan train journeys, visualize routes, and explore city information. It communicates with the backend API to fetch route plans and delay predictions.
-
-- **Key Features**:
-  - Route search with delay predictions and alternative routes.
-  - Interactive route visualization using Leaflet.
-  - City exploration with image carousels and real-time weather data.
-  - User authentication and admin panel for account management.
-  - Multilingual support via Vue I18n.
-- **Technologies**: Vue.js, Vue Router, Vue I18n, Leaflet, Axios, OpenWeatherMap API.
-- **Details**: For setup, usage, and component details, refer to the [Frontend README](https://github.com/brksdk/travel_app/blob/master/frontend/vue_frontend/src/README.md).
-
 ## Prerequisites
-To run TravelApp, ensure you have the following installed:
-- [Python](https://www.python.org/) (v3.10 or higher) for the backend.
-- [Node.js](https://nodejs.org/) (v16 or higher) and [npm](https://www.npmjs.com/) for the frontend.
-- [PostgreSQL](https://www.postgresql.org/) (v12 or higher) for the database.
-- [Docker](https://www.docker.com/) (optional, for backend deployment).
-- [Git](https://git-scm.com/) for cloning the repository.
+- [Python](https://www.python.org/) (v3.10 or higher) for backend
+- [Node.js](https://nodejs.org/) (v16 or higher) and [npm](https://www.npmjs.com/) for frontend
+- [PostgreSQL](https://www.postgresql.org/) (v12 or higher)
+- [Docker](https://www.docker.com/) (optional, for backend microservices)
+- [Git](https://git-scm.com/)
+- API keys for:
+  - [Deutsche Bahn Timetables API](https://developer.deutschebahn.com/) (backend)
+  - [OpenWeatherMap](https://openweathermap.org/) (frontend)
 
-## Getting Started
-1. Clone the repository:
+## Installation Overview
+1. **Clone the Repository**:
    ```bash
    git clone https://github.com/brksdk/travel_app.git
    cd travel_app
    ```
 
-2. Set up the backend:
-   - Navigate to `docker/vorhersage` and follow the [Backend README](https://github.com/brksdk/travel_app/blob/master/docker/vorhersage/README.md) for installation and configuration.
+2. **Set Up the Backend**:
+   - Navigate to `backend` and follow the instructions in [backend/README.md](./backend/README.md).
+   - Install Python dependencies, set up the PostgreSQL database, and run data population scripts.
+   - Deploy microservices using Docker Compose (optional).
+   - Start the Flask API server at `http://127.0.0.1:5000`.
 
-3. Set up the frontend:
-   - Navigate to `frontend/vue_frontend` and follow the [Frontend README](https://github.com/brksdk/travel_app/blob/master/frontend/vue_frontend/README.md) for installation and configuration.
+3. **Set Up the Frontend**:
+   - Navigate to `frontend/vue_frontend` and follow the instructions in [frontend/vue_frontend/README.md](./frontend/vue_frontend/README.md).
+   - Install Node.js dependencies and run the Vue.js development server at `http://localhost:8080`.
 
-4. Ensure the PostgreSQL database is running and populated with required tables (`streckentabelle` and `wetterdaten_zukunft`).
+4. **Configure Environment**:
+   - Ensure the backend API is running at `http://127.0.0.1:5000`.
+   - Verify database connectivity and API key configurations.
+   - Populate station coordinates using `backend/pycharm/populate_stations.py`.
 
-5. Start both the backend and frontend servers as described in their respective READMEs.
+5. **Run the Application**:
+   - Access the app at `http://localhost:8080` in your browser.
+   - Use the frontend to search routes, explore cities, or manage users.
 
 ## Usage
-- **Route Planning**: Use the frontend to search for train routes by specifying departure/arrival stations, date, and time. View predicted delays and alternative routes if transfers are at risk.
-- **City Exploration**: Browse city pages to view highlights and real-time weather data.
-- **User Management**: Register or log in to access personalized features. Admins (ID: 1) can manage user accounts via the admin panel.
-- **Route Visualization**: Explore routes on an interactive map with animated train movement.
+- **Route Planning**: Enter departure and arrival stations, date, and time on the home page to view routes with predicted delays and alternatives.
+- **City Exploration**: Navigate to city pages (e.g., `/city/Berlin`) to explore attractions and weather.
+- **User Authentication**: Register or log in to access personalized features; use admin credentials (ID=1) for the admin panel.
+- **Admin Panel**: List and delete users via the admin panel at `/adminpanel`.
+- **Map Visualization**: Use the route map page (`/wohin`) to see animated train routes on an interactive map.
 
-For detailed instructions, refer to the respective READMEs:
-- [Backend README](https://github.com/brksdk/travel_app/blob/master/docker/vorhersage/README.md)
-- [Frontend README](https://github.com/brksdk/travel_app/blob/master/frontend/vue_frontend/README.md)
+## Detailed Documentation
+- **Backend**: For details on Flask APIs, microservices, and data processing, see [backend/README.md](./backend/README.md).
+- **Frontend**: For Vue.js setup, components, and UI features, see [frontend/vue_frontend/README.md](./frontend/vue_frontend/README.md).
 
-## Contributing
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make your changes and commit (`git commit -m "Add your feature"`).
-4. Push to your branch (`git push origin feature/your-feature`).
-5. Open a pull request with a clear description of your changes.
+## Dependencies
+- **Backend**:
+  - Python libraries: `flask`, `flask-cors`, `flask-sqlalchemy`, `psycopg2-binary`, `bcrypt`, `requests`
+  - External APIs: Deutsche Bahn Timetables, Nominatim
+  - Database: PostgreSQL
+  - Tools: Docker (for microservices)
+- **Frontend**:
+  - Node modules: `vue@3.x`, `vue-router@4.x`, `vue-i18n@9.x`, `axios`, `vue-leaflet@0.10.1`, `leaflet@1.9.4`
+  - External APIs: OpenWeatherMap
+  - Assets: Images for backgrounds, flags, and map icons
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## Notes
+- Ensure the backend is running before starting the frontend, as the frontend depends on backend APIs.
+- Replace the OpenWeatherMap API key in `frontend/vue_frontend/src/views/City.vue` with a personal key for production.
+- The admin panel is restricted to the user with ID=1 for security.
+- Station coordinates must be populated using the backend script before route planning features work correctly.
 
 ## Contact
-For questions or suggestions, feel free to reach out:
-- **GitHub**: [brksdk](https://github.com/brksdk)
-- **Email**: wowitsberk@gmail.com
+For questions or contributions, reach out:
+- **GitHub:** [brksdk](https://github.com/brksdk)
