@@ -6,8 +6,21 @@ The TravelApp Route Planning Microservice is a Flask-based REST API designed to 
 - **Route Calculation:** Computes optimal train routes between two stations based on user-provided departure time and date.
 - **Delay Prediction Integration:** Analyzes predicted delays and transfer risks for each route segment.
 - **Alternative Route Planning:** Suggests alternative routes if transfers are at risk due to predicted delays.
+- **Expected total delay:** Calculates the expected total delay of the route based on the predicted delays.
+- **Total delay probability:** Calculates the the total delay probability of the route.
 - **Efficient Data Handling:** Uses pickled data (`station_departure.pkl`) for faster route calculations.
 - **Docker Support:** Deployable as a containerized service for scalability.
+
+## Project Structure
+```
+docker/routenplanung/
+├── flaskapp.py             # Main Flask application
+├── routen_berechnung.py    # Route calculation logic
+├── replan.py               # Route analysis and replanning logic
+├── requirements.txt        # Python dependencies
+├── Dockerfile              # Docker configuration
+└── station_departure.pkl   # Pickled station departure data (generated)
+```
 
 ## Prerequisites
 Before you begin, ensure you have the following installed:
@@ -72,6 +85,15 @@ Ensure the PostgreSQL database is accessible from the container (update host in 
 3. Use tools like [Postman](https://www.postman.com/) or [curl](https://curl.se/) to interact with the API endpoints.
 4. Ensure the prediction service (`http://127.0.0.1:5002/predict`) is running for delay predictions.
 
+
+## API Endpoints
+| Method | Endpoint                     | Description                              |
+|--------|------------------------------|------------------------------------------|
+| GET    | `/`                          | Test endpoint to check API status        |
+| GET    | `/route`                     | Calculate routes between two stations    |
+| POST   | `/api/analyse_and_replan`    | Analyze routes and suggest alternatives  |
+
+
 ### Example API Requests
 - **Calculate a Route:**
   ```bash
@@ -85,35 +107,99 @@ Ensure the PostgreSQL database is accessible from the container (update host in 
   -d '{"detailed_routes": [{"station_name_from": "Würzburg Hbf", "station_name_to": "Nürnberg Hbf", "planned_departure_from": "2025-04-15T09:03:00", "planned_arrival_to": "2025-04-15T09:56:00", "train_number": "525", "departure_date": "2025-04-15", "zugtyp": "ICE", "halt_nummer": 1, "train_avg_30": 5, "station_avg_30": 3, "umsteigeort": "Nürnberg Hbf", "umsteigezeit_minuten": 12, "predicted_delay": 10, "category_probabilities": {"On time": 20, "1-9 min": 60, "10-19 min": 15, "20-29 min": 4, "30+ min": 1}}]}'
   ```
 
-## API Endpoints
-| Method | Endpoint                     | Description                              |
-|--------|------------------------------|------------------------------------------|
-| GET    | `/`                          | Test endpoint to check API status        |
-| GET    | `/route`                     | Calculate routes between two stations    |
-| POST   | `/api/analyse_and_replan`    | Analyze routes and suggest alternatives  |
-
 ### `/route` Parameters
-- `source`: Starting station name (e.g., `Frankfurt (Main) Hbf`).
-- `target`: Destination station name (e.g., `Aachen Hbf`).
-- `date`: Travel date in `YYYY-MM-DD` format.
-- `time`: Departure time in `HH:MM` format.
+| Parameter | Description                      | Example          |
+|-----------|-----------------------------------|-------------------|
+| `source`  | Starting station                     | `Berlin`          |
+| `target`  | Destination station                     | `München`         |
+| `date`    | Travel date in the format `YYYY-MM-DD` | `2025-05-26`      |
+| `time`    | Departure time in the format `HH:MM`    | `08:00`           |
+
+### `/route` Example-Response
+```json
+[
+  {
+    "station_name_from": "Berlin Hbf",
+    "station_name_to": "Leipzig Hbf",
+    "planned_departure_from": "2025-05-26T08:00:00",
+    "planned_arrival_to": "2025-05-26T09:10:00",
+    "train_number": "ICE 1001",
+    "planned_arrival_date_from": "2025-05-26",
+    "zugtyp": "ICE",
+    "halt_nummer": 5,
+    "train_avg_30": 0.15,
+    "station_avg_30": 0.18,
+    "umsteigeort": null,
+    "umsteigezeit_minuten": null
+  },
+  {
+    "station_name_from": "Leipzig Hbf",
+    "station_name_to": "München Hbf",
+    "planned_departure_from": "2025-05-26T09:30:00",
+    "planned_arrival_to": "2025-05-26T10:00:00",
+    "train_number": "ICE 1203",
+    "planned_arrival_date_from": "2025-05-26",
+    "zugtyp": "ICE",
+    "halt_nummer": 3,
+    "train_avg_30": 0.12,
+    "station_avg_30": 0.20,
+    "umsteigeort": "Halle(Saale)Hbf",
+    "umsteigezeit_minuten": 20.0
+  }
+]
+```
 
 ### `/api/analyse_and_replan` Request Body
 - `detailed_routes`: Array of routes, each containing segments with fields like `station_name_from`, `station_name_to`, `planned_departure_from`, `planned_arrival_to`, `train_number`, `predicted_delay`, etc.
 
-## Project Structure
-```
-docker/routenplanung/
-├── flaskapp.py             # Main Flask application
-├── routen_berechnung.py    # Route calculation logic
-├── replan.py               # Route analysis and replanning logic
-├── requirements.txt        # Python dependencies
-├── Dockerfile              # Docker configuration
-└── station_departure.pkl   # Pickled station departure data (generated)
+```json
+{
+  "detailed_routes": [[
+    {
+      "station_from": "Berlin Hbf",
+      "station_to": "Hannover Hbf",
+      "planned_departure_from": "2025-06-04T12:30:00",
+      "planned_arrival_to": "2025-06-04T14:00:00",
+      "train_number": 525.0,
+      "departure_date": "2025-06-04",
+      "zugtyp": "ICE",
+      "umsteigeort": "Nürnberg Hbf",
+      "umsteigezeit_minuten": 12,
+      "predicted_delay": 12,
+      "category_probabilities": {
+        "On time": 60,
+        "1-9 min": 20,
+        "10-19 min": 10,
+        "20-29 min": 5,
+        "30+ min": 5
+      }
+    },
+    ...
+  ]]
+}
 ```
 
-## Database Schema
-The microservice uses a PostgreSQL database with the following table:
+### `/api/analyse_and_replan` Example response
+```json
+{
+  "status": "success",
+  "analysed_routes": [
+    {
+      "urspruengliche_route": [...],
+      "alternative_routeninfos": [...],
+      "erwartete_gesamtverspaetung_minuten": 18.5,
+      "gesamtverspaetungswahrscheinlichkeit": 74.6
+    }
+  ]
+}
+```
+
+If no replanning is necessary, the field `"alternative_routeninfos"` remains empty.
+
+
+## Data
+- `station_departure.pkl` Contains all known departures for each station (based on the planned timetable in the database), sorted by departure time. The file was created based on the sollfahrplan_reihenfolge table and reduces access to connections per station to a simple dictionary lookup
+
 - **sollfahrplan_reihenfolge**: Contains train schedules with columns:
   - `zug` (train_number)
   - `halt` (station_name)
@@ -128,22 +214,14 @@ The microservice uses a PostgreSQL database with the following table:
 - **PostgreSQL**: Stores train schedule data (default: `postgresql://postgres:UWP12345!@35.246.149.161:5432/postgres`).
 - **Prediction Service**: Required for delay predictions (`http://127.0.0.1:5002/predict`).
 
-## Contributing
-Contributions are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make your changes and commit (`git commit -m "Add your feature"`).
-4. Push to your branch (`git push origin feature/your-feature`).
-5. Open a pull request with a clear description of your changes.
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+## Weitere Dokumentation
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+- [Details for replanning](docs/replan.md)
+- [Details for route planning](docs/route_planning.md)
 
-## Contact
-For questions or suggestions, feel free to reach out:
-- **GitHub:** [brksdk](https://github.com/brksdk)
-- **Email:** wowitsberk@gmail.com
 
-Happy route planning! 🚆
+
+## Responsibility
+ 
+Jule
