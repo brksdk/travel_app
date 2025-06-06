@@ -158,4 +158,4 @@ docker/vorhersage/
 
 ## Contact
 For questions or suggestions, feel free to reach out:
-- **GitHub:** [brksdk](https://github.com/brksdk)
+- **GitHub:** [Yunus Emre Van](https://github.com/yemrevan)
