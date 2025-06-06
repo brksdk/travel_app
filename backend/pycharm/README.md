@@ -1,4 +1,4 @@
-# TravelApp Backend - Pycharm Module
+# TravelApp Backend Centeral Script
 
 This module in the TravelApp backend contains critical components for data population and user-facing API services. It includes scripts for populating station coordinates in the database and a Flask-based API for user management, station data retrieval, and route planning integration. These components enhance the TravelApp by enabling station geolocation and providing a central API to connect the frontend with backend microservices.
 
